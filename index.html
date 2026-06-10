@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programa de Aconselhamento — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #111E29;
+      --gold:      #BC9B5F;
+      --borgonha:  #571C25;
+      --white:     #FFFFFF;
+      --off-white: #EAEAEA;
+      --muted:     #6B7680;
+      --border:    #D6D6D6;
+      --r-soft:    6px;
+      --r-card:    14px;
+    }
+
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--off-white);
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--navy);
+      padding: 52px 24px 44px;
+      text-align: center;
+    }
+    .eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .site-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 5vw, 42px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 36px 24px 0;
+      text-align: center;
+    }
+    .intro p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    /* ── FORM WRAP ── */
+    .form-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── BLOCK ── */
+    .block {
+      background: var(--white);
+      border-radius: var(--r-card);
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .block-header {
+      background: var(--navy);
+      padding: 22px 32px;
+    }
+    .block-num {
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+    .block-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .block-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 3px;
+    }
+    .block-body {
+      padding: 32px;
+    }
+
+    /* ── QUESTION ── */
+    .q {
+      margin-bottom: 28px;
+    }
+    .q:last-child { margin-bottom: 0; }
+
+    .q label,
+    .q .ql {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 10px;
+      line-height: 1.55;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-soft);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color .18s;
+    }
+    input[type="text"]:focus,
+    textarea:focus { border-color: var(--gold); }
+    textarea { min-height: 96px; resize: vertical; }
+
+    /* ── ROUTING OPTIONS ── */
+    .routing-opts { display: flex; flex-direction: column; gap: 10px; }
+    .routing-opts input[type="radio"] { display: none; }
+    .routing-opts label {
+      padding: 15px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-soft);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 400;
+      transition: all .15s;
+    }
+    .routing-opts input[type="radio"]:checked + label {
+      border-color: var(--gold);
+      background: rgba(188,155,95,.09);
+      font-weight: 500;
+    }
+
+    /* ── SCALE 1–10 ── */
+    .scale-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .scale-row input[type="radio"] { display: none; }
+    .scale-row label {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: var(--r-soft);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      margin-bottom: 0;
+    }
+    .scale-row label:hover { border-color: var(--gold); color: var(--gold); }
+    .scale-row input[type="radio"]:checked + label {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+    .scale-ends {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 7px;
+    }
+    .scale-ends span { font-size: 11px; color: var(--muted); }
+
+    /* ── YES / NO ── */
+    .yn-row { display: flex; gap: 12px; }
+    .yn-row input[type="radio"] { display: none; }
+    .yn-row label {
+      flex: 1;
+      padding: 13px;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: var(--r-soft);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all .15s;
+      margin-bottom: 0;
+    }
+    .yn-row input[type="radio"]:checked + label {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    /* ── CONDITIONAL ── */
+    .cond-f, .cond-s { display: none; }
+
+    /* ── DIVIDER ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+
+    /* ── SUBMIT ── */
+    .submit-area { text-align: center; padding: 36px 0 0; }
+    .btn-submit {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 16px 52px;
+      border-radius: var(--r-soft);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: .4px;
+      transition: background .2s;
+    }
+    .btn-submit:hover { background: #1c2f42; }
+    .submit-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .site-footer strong {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .block-body { padding: 22px 18px; }
+      .site-header { padding: 40px 20px 32px; }
+      .scale-row label { width: 38px; height: 38px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="eyebrow">Bárbara Quercetti</div>
+  <h1 class="site-title">Programa de Aconselhamento<br>Tríade do Legado</h1>
+</header>
+
+<div class="intro">
+  <p>Esse formulário não busca respostas certas. Ele busca verdades.<br>
+  Tudo será tratado com confidencialidade. Sua honestidade aqui vai ser a base do nosso trabalho juntos.</p>
+</div>
+
+<div class="form-wrap">
+<form action="https://formsubmit.co/barbara.quercetti@gmail.com" method="POST">
+  <input type="hidden" name="_subject" value="Novo diagnóstico — Programa de Aconselhamento Tríade do Legado">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_next" value="https://gringoles777.github.io/mastermind-barbara/diagnostico/obrigada.html">
+
+  <!-- ── ROTEAMENTO ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Antes de começar</div>
+      <div class="block-title">Qual é o seu papel na empresa hoje?</div>
+    </div>
+    <div class="block-body">
+      <div class="q">
+        <div class="routing-opts">
+          <input type="radio" name="papel" id="p-f" value="Fundador(a)">
+          <label for="p-f">Fundador(a) — fui eu quem construiu o negócio</label>
+          <input type="radio" name="papel" id="p-s" value="Sucessor(a)">
+          <label for="p-s">Sucessor(a) ou familiar entrando na gestão</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BLOCO 1 — O TERRITÓRIO ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 01</div>
+      <div class="block-title">O Território</div>
+      <div class="block-desc">Pra entender onde você está pisando.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <label for="b1_nome">Nome completo *</label>
+        <input type="text" id="b1_nome" name="1. Nome completo" required>
+      </div>
+
+      <div class="q">
+        <label for="b1_empresa">Nome da empresa *</label>
+        <input type="text" id="b1_empresa" name="2. Nome da empresa" required>
+      </div>
+
+      <div class="q">
+        <label for="b1_cidade">Cidade e estado</label>
+        <input type="text" id="b1_cidade" name="3. Cidade e estado">
+      </div>
+
+      <div class="q">
+        <label for="b1_setor">Setor de atuação</label>
+        <input type="text" id="b1_setor" name="4. Setor de atuação">
+      </div>
+
+      <div class="q">
+        <label for="b1_fat">Faturamento aproximado atual</label>
+        <input type="text" id="b1_fat" name="5. Faturamento aproximado">
+      </div>
+
+      <div class="q">
+        <label for="b1_cargo">Cargo atual *</label>
+        <input type="text" id="b1_cargo" name="6. Cargo atual" required>
+      </div>
+
+      <div class="q">
+        <label for="b1_papel">Qual o papel que você exerce na prática, além do cargo?</label>
+        <textarea id="b1_papel" name="7. Papel na prática"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b1_func">Quantos funcionários a empresa tem hoje?</label>
+        <input type="text" id="b1_func" name="8. Número de funcionários">
+      </div>
+
+      <div class="q">
+        <label for="b1_decisores">Quem são os principais tomadores de decisão na empresa?</label>
+        <textarea id="b1_decisores" name="9. Tomadores de decisão"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b1_fundador">Quem fundou o negócio? E qual é o papel dessa pessoa hoje?</label>
+        <textarea id="b1_fundador" name="10s. Fundador e papel atual"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b1_sucessores">Quem são os seus sucessores em potencial? Qual é o papel deles hoje?</label>
+        <textarea id="b1_sucessores" name="10f. Sucessores em potencial"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b1_cultura">Como você descreveria a cultura atual da empresa em 3 palavras?</label>
+        <input type="text" id="b1_cultura" name="11. Cultura em 3 palavras">
+      </div>
+
+      <div class="q">
+        <label for="b1_funciona">O que mais funciona hoje na empresa?</label>
+        <textarea id="b1_funciona" name="12. O que funciona"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b1_preocupa">O que mais te preocupa?</label>
+        <textarea id="b1_preocupa" name="13. O que preocupa"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BLOCO 2 — O INDIVÍDUO ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 02</div>
+      <div class="block-title">O Indivíduo</div>
+      <div class="block-desc">Pra entender como você se enxerga e o que te trava.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <label for="b2_desafio">Qual o maior desafio que você enfrenta hoje na sua posição?</label>
+        <textarea id="b2_desafio" name="14. Maior desafio"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_forte">Em quais momentos você se sente forte?</label>
+        <textarea id="b2_forte" name="15. Momentos de força"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_inseguro">Em quais momentos você se sente inseguro(a)?</label>
+        <textarea id="b2_inseguro" name="16. Momentos de insegurança"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_evita">O que você evita confrontar na empresa ou na família?</label>
+        <textarea id="b2_evita" name="17. O que evita confrontar"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_equipe">Como a sua equipe responde à sua liderança na prática?</label>
+        <textarea id="b2_equipe" name="18. Resposta da equipe à liderança"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b2_ouvido">Você se sente ouvido(a) pela liderança mais velha? Como isso aparece no dia a dia?</label>
+        <textarea id="b2_ouvido" name="19s. Ouvido pela liderança mais velha"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b2_ouve">Você consegue ouvir o que o(a) sucessor(a) traz — mesmo quando é diferente do que você faria?</label>
+        <textarea id="b2_ouve" name="19f. Ouvir o sucessor"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b2_trava_s">O que mais te trava emocionalmente no papel de sucessor(a)?</label>
+        <textarea id="b2_trava_s" name="20s. Trava emocional como sucessor"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b2_trava_f">O que mais te trava emocionalmente no processo de soltar o controle?</label>
+        <textarea id="b2_trava_f" name="20f. Trava emocional ao soltar controle"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_critica">Qual crítica mais te afeta?</label>
+        <textarea id="b2_critica" name="21. Crítica que mais afeta"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b2_enxergar">O que você gostaria de enxergar em você que ainda não vê?</label>
+        <textarea id="b2_enxergar" name="22. O que quer enxergar em si mesmo"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BLOCO 3 — O SISTEMA ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 03</div>
+      <div class="block-title">O Sistema</div>
+      <div class="block-desc">Pra entender o nível de organização e clareza da empresa.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <label for="b3_regras">A empresa tem regras claras de funcionamento? Elas são seguidas na prática?</label>
+        <textarea id="b3_regras" name="23. Regras de funcionamento"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_docs">Existem documentos formais — acordos societários, regimento interno, organograma?</label>
+        <textarea id="b3_docs" name="24. Documentos formais"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_reunioes">Existem reuniões recorrentes de gestão? Elas funcionam?</label>
+        <textarea id="b3_reunioes" name="25. Reuniões de gestão"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_decisoes">As decisões estratégicas são compartilhadas ou concentradas?</label>
+        <textarea id="b3_decisoes" name="26. Decisões estratégicas"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_financas">Como você avalia o uso dos recursos financeiros da empresa hoje?</label>
+        <textarea id="b3_financas" name="27. Uso dos recursos financeiros"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_buracos">Quais são os maiores buracos de gestão que você enxerga?</label>
+        <textarea id="b3_buracos" name="28. Buracos de gestão"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b3_plano">Existe um plano sucessório formalizado?</label>
+        <textarea id="b3_plano" name="29. Plano sucessório"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b3_reconhece">O fundador reconhece a necessidade de transição? Como isso aparece?</label>
+        <textarea id="b3_reconhece" name="30s. Fundador reconhece a transição"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b3_sem_mim">Você consegue visualizar a empresa funcionando sem a sua presença diária? O que impede isso hoje?</label>
+        <textarea id="b3_sem_mim" name="30f. Empresa sem presença diária"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b3_espaco_s">Há espaço real pra você assumir mais responsabilidade hoje?</label>
+        <textarea id="b3_espaco_s" name="31s. Espaço para assumir responsabilidade"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b3_espaco_f">Você criou espaço real para o(a) sucessor(a) assumir mais responsabilidade?</label>
+        <textarea id="b3_espaco_f" name="31f. Espaço criado para o sucessor"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BLOCO 4 — A AÇÃO ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 04</div>
+      <div class="block-title">A Ação</div>
+      <div class="block-desc">Pra entender como você age e conduz as pessoas.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <label for="b4_conflito">Quando você precisa tomar uma decisão que vai gerar conflito, o que você faz?</label>
+        <textarea id="b4_conflito" name="32. Decisão que gera conflito"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_comando">Como as pessoas da sua empresa sabem que você está no comando?</label>
+        <textarea id="b4_comando" name="33. Sinais de comando"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_crise">Como você se comporta numa crise — e como as pessoas ao redor te descrevem nesses momentos?</label>
+        <textarea id="b4_crise" name="34. Comportamento em crise"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_feedback">Como você dá um feedback difícil para alguém da equipe?</label>
+        <textarea id="b4_feedback" name="35. Feedback difícil"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_trava">Tem alguma situação em que você sabe que deveria agir mas fica travado(a)? Qual?</label>
+        <textarea id="b4_trava" name="36. Situação de trava na ação"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_nao_entrega">Como você reage quando alguém da equipe não entrega o que foi combinado?</label>
+        <textarea id="b4_nao_entrega" name="37. Reação a não entrega"></textarea>
+      </div>
+
+      <div class="q cond-s">
+        <label for="b4_revertida">Como você age quando o fundador ou a liderança mais velha reverte uma decisão que você tomou?</label>
+        <textarea id="b4_revertida" name="38s. Decisão revertida pelo fundador"></textarea>
+      </div>
+
+      <div class="q cond-f">
+        <label for="b4_discorda">Como você age quando o(a) sucessor(a) toma uma decisão que você discordaria?</label>
+        <textarea id="b4_discorda" name="38f. Discordância com o sucessor"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b4_resolve">As pessoas te procuram para resolver problemas ou esperam que você dê as respostas? O que você acha disso?</label>
+        <textarea id="b4_resolve" name="39. Quem resolve os problemas"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BLOCO 5 — SEU PONTO DE PARTIDA ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 05</div>
+      <div class="block-title">Seu Ponto de Partida</div>
+      <div class="block-desc">Não pense no que deveria ser — pense no que é verdade pra você hoje.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <div class="ql">1. Quão confiante você se sente no papel que ocupa na empresa?</div>
+        <div class="scale-row">
+          <input type="radio" name="e1" id="e1-1" value="1"><label for="e1-1">1</label>
+          <input type="radio" name="e1" id="e1-2" value="2"><label for="e1-2">2</label>
+          <input type="radio" name="e1" id="e1-3" value="3"><label for="e1-3">3</label>
+          <input type="radio" name="e1" id="e1-4" value="4"><label for="e1-4">4</label>
+          <input type="radio" name="e1" id="e1-5" value="5"><label for="e1-5">5</label>
+          <input type="radio" name="e1" id="e1-6" value="6"><label for="e1-6">6</label>
+          <input type="radio" name="e1" id="e1-7" value="7"><label for="e1-7">7</label>
+          <input type="radio" name="e1" id="e1-8" value="8"><label for="e1-8">8</label>
+          <input type="radio" name="e1" id="e1-9" value="9"><label for="e1-9">9</label>
+          <input type="radio" name="e1" id="e1-10" value="10"><label for="e1-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Nenhuma confiança</span><span>Totalmente confiante</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">2. Quão claro está o seu papel dentro do negócio?</div>
+        <div class="scale-row">
+          <input type="radio" name="e2" id="e2-1" value="1"><label for="e2-1">1</label>
+          <input type="radio" name="e2" id="e2-2" value="2"><label for="e2-2">2</label>
+          <input type="radio" name="e2" id="e2-3" value="3"><label for="e2-3">3</label>
+          <input type="radio" name="e2" id="e2-4" value="4"><label for="e2-4">4</label>
+          <input type="radio" name="e2" id="e2-5" value="5"><label for="e2-5">5</label>
+          <input type="radio" name="e2" id="e2-6" value="6"><label for="e2-6">6</label>
+          <input type="radio" name="e2" id="e2-7" value="7"><label for="e2-7">7</label>
+          <input type="radio" name="e2" id="e2-8" value="8"><label for="e2-8">8</label>
+          <input type="radio" name="e2" id="e2-9" value="9"><label for="e2-9">9</label>
+          <input type="radio" name="e2" id="e2-10" value="10"><label for="e2-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Muito confuso</span><span>Muito claro</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q cond-s">
+        <div class="ql">3. Quão preparado(a) você se sente para assumir decisões estratégicas hoje?</div>
+        <div class="scale-row">
+          <input type="radio" name="e3" id="e3-1" value="1"><label for="e3-1">1</label>
+          <input type="radio" name="e3" id="e3-2" value="2"><label for="e3-2">2</label>
+          <input type="radio" name="e3" id="e3-3" value="3"><label for="e3-3">3</label>
+          <input type="radio" name="e3" id="e3-4" value="4"><label for="e3-4">4</label>
+          <input type="radio" name="e3" id="e3-5" value="5"><label for="e3-5">5</label>
+          <input type="radio" name="e3" id="e3-6" value="6"><label for="e3-6">6</label>
+          <input type="radio" name="e3" id="e3-7" value="7"><label for="e3-7">7</label>
+          <input type="radio" name="e3" id="e3-8" value="8"><label for="e3-8">8</label>
+          <input type="radio" name="e3" id="e3-9" value="9"><label for="e3-9">9</label>
+          <input type="radio" name="e3" id="e3-10" value="10"><label for="e3-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Nada preparado(a)</span><span>Totalmente preparado(a)</span></div>
+      </div>
+
+      <div class="q cond-f">
+        <div class="ql">3. Quão preparado(a) você se sente para delegar decisões estratégicas hoje?</div>
+        <div class="scale-row">
+          <input type="radio" name="e3f" id="e3f-1" value="1"><label for="e3f-1">1</label>
+          <input type="radio" name="e3f" id="e3f-2" value="2"><label for="e3f-2">2</label>
+          <input type="radio" name="e3f" id="e3f-3" value="3"><label for="e3f-3">3</label>
+          <input type="radio" name="e3f" id="e3f-4" value="4"><label for="e3f-4">4</label>
+          <input type="radio" name="e3f" id="e3f-5" value="5"><label for="e3f-5">5</label>
+          <input type="radio" name="e3f" id="e3f-6" value="6"><label for="e3f-6">6</label>
+          <input type="radio" name="e3f" id="e3f-7" value="7"><label for="e3f-7">7</label>
+          <input type="radio" name="e3f" id="e3f-8" value="8"><label for="e3f-8">8</label>
+          <input type="radio" name="e3f" id="e3f-9" value="9"><label for="e3f-9">9</label>
+          <input type="radio" name="e3f" id="e3f-10" value="10"><label for="e3f-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Nada preparado(a)</span><span>Totalmente preparado(a)</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">4. Como você avalia seu relacionamento com o(a) fundador(a) / sucessor(a)?</div>
+        <div class="scale-row">
+          <input type="radio" name="e4" id="e4-1" value="1"><label for="e4-1">1</label>
+          <input type="radio" name="e4" id="e4-2" value="2"><label for="e4-2">2</label>
+          <input type="radio" name="e4" id="e4-3" value="3"><label for="e4-3">3</label>
+          <input type="radio" name="e4" id="e4-4" value="4"><label for="e4-4">4</label>
+          <input type="radio" name="e4" id="e4-5" value="5"><label for="e4-5">5</label>
+          <input type="radio" name="e4" id="e4-6" value="6"><label for="e4-6">6</label>
+          <input type="radio" name="e4" id="e4-7" value="7"><label for="e4-7">7</label>
+          <input type="radio" name="e4" id="e4-8" value="8"><label for="e4-8">8</label>
+          <input type="radio" name="e4" id="e4-9" value="9"><label for="e4-9">9</label>
+          <input type="radio" name="e4" id="e4-10" value="10"><label for="e4-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Péssimo</span><span>Excelente</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">5. Como você avalia seu relacionamento com a equipe?</div>
+        <div class="scale-row">
+          <input type="radio" name="e5" id="e5-1" value="1"><label for="e5-1">1</label>
+          <input type="radio" name="e5" id="e5-2" value="2"><label for="e5-2">2</label>
+          <input type="radio" name="e5" id="e5-3" value="3"><label for="e5-3">3</label>
+          <input type="radio" name="e5" id="e5-4" value="4"><label for="e5-4">4</label>
+          <input type="radio" name="e5" id="e5-5" value="5"><label for="e5-5">5</label>
+          <input type="radio" name="e5" id="e5-6" value="6"><label for="e5-6">6</label>
+          <input type="radio" name="e5" id="e5-7" value="7"><label for="e5-7">7</label>
+          <input type="radio" name="e5" id="e5-8" value="8"><label for="e5-8">8</label>
+          <input type="radio" name="e5" id="e5-9" value="9"><label for="e5-9">9</label>
+          <input type="radio" name="e5" id="e5-10" value="10"><label for="e5-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Distante</span><span>Respeitado e presente</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">6. Quão confortável você está para ter conversas difíceis com quem lidera ao seu lado?</div>
+        <div class="scale-row">
+          <input type="radio" name="e6" id="e6-1" value="1"><label for="e6-1">1</label>
+          <input type="radio" name="e6" id="e6-2" value="2"><label for="e6-2">2</label>
+          <input type="radio" name="e6" id="e6-3" value="3"><label for="e6-3">3</label>
+          <input type="radio" name="e6" id="e6-4" value="4"><label for="e6-4">4</label>
+          <input type="radio" name="e6" id="e6-5" value="5"><label for="e6-5">5</label>
+          <input type="radio" name="e6" id="e6-6" value="6"><label for="e6-6">6</label>
+          <input type="radio" name="e6" id="e6-7" value="7"><label for="e6-7">7</label>
+          <input type="radio" name="e6" id="e6-8" value="8"><label for="e6-8">8</label>
+          <input type="radio" name="e6" id="e6-9" value="9"><label for="e6-9">9</label>
+          <input type="radio" name="e6" id="e6-10" value="10"><label for="e6-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Evito sempre</span><span>Faço naturalmente</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">7. Quão bem você lida com críticas ou conflitos no ambiente familiar/empresarial?</div>
+        <div class="scale-row">
+          <input type="radio" name="e7" id="e7-1" value="1"><label for="e7-1">1</label>
+          <input type="radio" name="e7" id="e7-2" value="2"><label for="e7-2">2</label>
+          <input type="radio" name="e7" id="e7-3" value="3"><label for="e7-3">3</label>
+          <input type="radio" name="e7" id="e7-4" value="4"><label for="e7-4">4</label>
+          <input type="radio" name="e7" id="e7-5" value="5"><label for="e7-5">5</label>
+          <input type="radio" name="e7" id="e7-6" value="6"><label for="e7-6">6</label>
+          <input type="radio" name="e7" id="e7-7" value="7"><label for="e7-7">7</label>
+          <input type="radio" name="e7" id="e7-8" value="8"><label for="e7-8">8</label>
+          <input type="radio" name="e7" id="e7-9" value="9"><label for="e7-9">9</label>
+          <input type="radio" name="e7" id="e7-10" value="10"><label for="e7-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Muito mal</span><span>Muito bem</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">8. Quão satisfeito(a) você está com a forma como administra seu tempo e energia?</div>
+        <div class="scale-row">
+          <input type="radio" name="e8" id="e8-1" value="1"><label for="e8-1">1</label>
+          <input type="radio" name="e8" id="e8-2" value="2"><label for="e8-2">2</label>
+          <input type="radio" name="e8" id="e8-3" value="3"><label for="e8-3">3</label>
+          <input type="radio" name="e8" id="e8-4" value="4"><label for="e8-4">4</label>
+          <input type="radio" name="e8" id="e8-5" value="5"><label for="e8-5">5</label>
+          <input type="radio" name="e8" id="e8-6" value="6"><label for="e8-6">6</label>
+          <input type="radio" name="e8" id="e8-7" value="7"><label for="e8-7">7</label>
+          <input type="radio" name="e8" id="e8-8" value="8"><label for="e8-8">8</label>
+          <input type="radio" name="e8" id="e8-9" value="9"><label for="e8-9">9</label>
+          <input type="radio" name="e8" id="e8-10" value="10"><label for="e8-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Muito insatisfeito(a)</span><span>Muito satisfeito(a)</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">9. Quanto você sente que é reconhecido(a) pelo seu trabalho hoje?</div>
+        <div class="scale-row">
+          <input type="radio" name="e9" id="e9-1" value="1"><label for="e9-1">1</label>
+          <input type="radio" name="e9" id="e9-2" value="2"><label for="e9-2">2</label>
+          <input type="radio" name="e9" id="e9-3" value="3"><label for="e9-3">3</label>
+          <input type="radio" name="e9" id="e9-4" value="4"><label for="e9-4">4</label>
+          <input type="radio" name="e9" id="e9-5" value="5"><label for="e9-5">5</label>
+          <input type="radio" name="e9" id="e9-6" value="6"><label for="e9-6">6</label>
+          <input type="radio" name="e9" id="e9-7" value="7"><label for="e9-7">7</label>
+          <input type="radio" name="e9" id="e9-8" value="8"><label for="e9-8">8</label>
+          <input type="radio" name="e9" id="e9-9" value="9"><label for="e9-9">9</label>
+          <input type="radio" name="e9" id="e9-10" value="10"><label for="e9-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Nenhum reconhecimento</span><span>Plenamente reconhecido(a)</span></div>
+      </div>
+
+      <hr>
+
+      <div class="q">
+        <div class="ql">10. Quão dono(a) do seu caminho você se sente nesse momento?</div>
+        <div class="scale-row">
+          <input type="radio" name="e10" id="e10-1" value="1"><label for="e10-1">1</label>
+          <input type="radio" name="e10" id="e10-2" value="2"><label for="e10-2">2</label>
+          <input type="radio" name="e10" id="e10-3" value="3"><label for="e10-3">3</label>
+          <input type="radio" name="e10" id="e10-4" value="4"><label for="e10-4">4</label>
+          <input type="radio" name="e10" id="e10-5" value="5"><label for="e10-5">5</label>
+          <input type="radio" name="e10" id="e10-6" value="6"><label for="e10-6">6</label>
+          <input type="radio" name="e10" id="e10-7" value="7"><label for="e10-7">7</label>
+          <input type="radio" name="e10" id="e10-8" value="8"><label for="e10-8">8</label>
+          <input type="radio" name="e10" id="e10-9" value="9"><label for="e10-9">9</label>
+          <input type="radio" name="e10" id="e10-10" value="10"><label for="e10-10">10</label>
+        </div>
+        <div class="scale-ends"><span>Perdido(a)</span><span>Totalmente no controle</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── BLOCO 6 — O PROCESSO ── -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-num">Bloco 06</div>
+      <div class="block-title">O Processo</div>
+      <div class="block-desc">Pra entender o quanto você está pronto(a) para o que vem.</div>
+    </div>
+    <div class="block-body">
+
+      <div class="q">
+        <label for="b6_construir">O que você quer construir com esse trabalho?</label>
+        <textarea id="b6_construir" name="40. O que quer construir"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b6_reputacao">Qual reputação você quer ter como pessoa e profissional?</label>
+        <textarea id="b6_reputacao" name="41. Reputação desejada"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b6_valeu">O que precisa acontecer pra você sentir que valeu a pena?</label>
+        <textarea id="b6_valeu" name="42. O que precisa acontecer"></textarea>
+      </div>
+
+      <div class="q">
+        <label for="b6_prazo">Em quanto tempo você gostaria de ver mudança real acontecendo?</label>
+        <input type="text" id="b6_prazo" name="43. Prazo desejado para mudança">
+      </div>
+
+      <div class="q">
+        <div class="ql">Você está aberto(a) a ser confrontado(a) durante o processo?</div>
+        <div class="yn-row">
+          <input type="radio" name="b6_confronto" id="confronto-s" value="Sim">
+          <label for="confronto-s">Sim</label>
+          <input type="radio" name="b6_confronto" id="confronto-n" value="Não">
+          <label for="confronto-n">Não</label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button type="submit" class="btn-submit">Enviar diagnóstico</button>
+    <p class="submit-note">Suas respostas são confidenciais e chegam diretamente para Bárbara.</p>
+  </div>
+
+</form>
+</div>
+
+<footer class="site-footer">
+  <strong>Tríade do Legado</strong> · Bárbara Quercetti
+</footer>
+
+<script>
+  const radios = document.querySelectorAll('input[name="papel"]');
+
+  function aplicarLogica(valor) {
+    const ehFundador = valor === 'Fundador(a)';
+    document.querySelectorAll('.cond-f').forEach(el => {
+      el.style.display = ehFundador ? 'block' : 'none';
+    });
+    document.querySelectorAll('.cond-s').forEach(el => {
+      el.style.display = ehFundador ? 'none' : 'block';
+    });
+  }
+
+  radios.forEach(r => r.addEventListener('change', () => aplicarLogica(r.value)));
+</script>
+
+</body>
+</html>
