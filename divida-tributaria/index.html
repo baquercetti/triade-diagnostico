@@ -682,6 +682,19 @@
           body: new FormData(form)
         });
       } catch (err) {}
+
+      var crit = computeCriticidade();
+      var empresaEl = form.querySelector('input[name="03. Nome da empresa"]');
+      var nomeEl = form.querySelector('input[name="01. Nome completo"]');
+      var nextInput = form.querySelector('input[name="_next"]');
+      var qp = new URLSearchParams();
+      qp.set('nivel', crit.nivel);
+      qp.set('score', crit.score);
+      crit.drivers.forEach(function (d, i) { qp.set('m' + (i + 1), d); });
+      qp.set('empresa', empresaEl ? empresaEl.value : '');
+      qp.set('nome', nomeEl ? nomeEl.value : '');
+      nextInput.value = nextInput.value + '?' + qp.toString();
+
       form.submit();
       return;
     }
@@ -704,6 +717,70 @@
     document.getElementById('navBar').style.display = 'flex';
     steps = Array.from(document.querySelectorAll('#diagForm .step'));
     showStep(0);
+  }
+
+  function getVal(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  }
+  function isChecked(name) {
+    return !!document.querySelector('input[name="' + name + '"]:checked');
+  }
+
+  function computeCriticidade() {
+    var score = 0;
+    var drivers = [];
+    function add(pts, label) {
+      if (pts > 0) { score += pts; drivers.push({ pts: pts, label: label }); }
+    }
+
+    var rj = getVal('20. Situação de recuperação judicial');
+    if (rj === 'Já está em recuperação judicial') add(4, 'já está em recuperação judicial');
+    else if (rj === 'Estou avaliando entrar') add(2, 'avaliando entrar em recuperação judicial');
+
+    var inscrita = getVal('13. Inscrita em Dívida Ativa');
+    if (inscrita === 'Sim') add(2, 'já inscrita em Dívida Ativa');
+    else if (inscrita === 'Não sei') add(1, 'não sabe se está em Dívida Ativa');
+
+    var valorMap = {
+      'Até R$100 mil': 1, 'R$100 mil a R$500 mil': 2, 'R$500 mil a R$1 milhão': 3,
+      'R$1 a R$5 milhões': 4, 'R$5 a R$20 milhões': 5, 'Acima de R$20 milhões': 6,
+      'Não sei precisar': 2
+    };
+    var valor = getVal('12. Valor total aproximado');
+    if (valorMap[valor]) add(valorMap[valor], 'dívida na faixa "' + valor + '"');
+
+    var tempo = getVal('17. Tempo de acúmulo da dívida');
+    if (tempo === 'Mais de 10 anos') add(2, 'dívida acumulada há mais de 10 anos');
+    else if (tempo === '5 a 10 anos') add(1, 'dívida acumulada entre 5 e 10 anos');
+
+    var preocupacoes = [
+      ['21a. Preocupação — Bloqueio de conta ou penhora', 3, 'risco de bloqueio de conta ou penhora'],
+      ['21d. Preocupação — Patrimônio pessoal em risco', 3, 'patrimônio pessoal dos sócios em risco'],
+      ['21b. Preocupação — Impossibilidade de licitar', 2, 'impossibilidade de participar de licitações'],
+      ['21c. Preocupação — Protesto ou negativação', 2, 'risco de protesto ou negativação'],
+      ['21e. Preocupação — Dificuldade de crédito', 1, 'dificuldade de conseguir crédito'],
+      ['21f. Preocupação — Pressão de sócios/família', 1, 'pressão de sócios ou família']
+    ];
+    preocupacoes.forEach(function (p) {
+      if (isChecked(p[0])) add(p[1], p[2]);
+    });
+
+    var parcelamento = getVal('14. Parcelamento ativo hoje');
+    if (parcelamento === 'Não' && inscrita === 'Sim') add(2, 'sem parcelamento ativo mesmo já inscrita em Dívida Ativa');
+
+    var mapeamento = getVal('18. Mapeamento completo das dívidas');
+    if (mapeamento === 'Não, ainda não tenho nada organizado') add(1, 'sem levantamento organizado da dívida');
+
+    var nivel = 'Baixa';
+    if (score >= 19) nivel = 'Crítica';
+    else if (score >= 12) nivel = 'Alta';
+    else if (score >= 6) nivel = 'Média';
+
+    drivers.sort(function (a, b) { return b.pts - a.pts; });
+    var topDrivers = drivers.slice(0, 3).map(function (d) { return d.label; });
+
+    return { score: score, nivel: nivel, drivers: topDrivers };
   }
 
   function checkTermScroll() {
