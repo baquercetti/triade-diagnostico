@@ -301,6 +301,7 @@
     <input type="hidden" name="_captcha" value="false">
     <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_next" value="https://baquercetti.github.io/triade-diagnostico/obrigada.html">
+    <input type="hidden" name="_form" value="aconselhamento">
 
     <!-- STEP 0 — ROTEAMENTO -->
     <div class="step" data-condition="all" data-block="">
@@ -877,7 +878,16 @@
     const vis = visibleSteps();
     const idx = vis.indexOf(steps[current]);
     if (idx === vis.length - 1) {
-      document.getElementById('diagForm').submit();
+      const form = document.getElementById('diagForm');
+      try {
+        fetch('https://script.google.com/macros/s/AKfycbyJV0lGXj5WgRXA1mGGaSUaVrLVdXHaD4OlIh_6LV4nRSKrSpbn1fOBXxHTKVxHH7OYrg/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          keepalive: true,
+          body: new FormData(form)
+        });
+      } catch (err) {}
+      form.submit();
       return;
     }
     const next = steps.indexOf(vis[idx + 1]);
