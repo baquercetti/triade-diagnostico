@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seu guia está pronto — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #111E29;
+      --gold: #BC9B5F;
+      --white: #FFFFFF;
+      --off-white: #EAEAEA;
+      --muted: #6B7680;
+    }
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+    }
+    .wrap { max-width: 520px; }
+    .gold-line {
+      width: 48px;
+      height: 2px;
+      background: var(--gold);
+      margin: 0 auto 32px;
+    }
+    .heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(30px, 6vw, 44px);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .body-text {
+      font-size: 15px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.9;
+      margin-bottom: 36px;
+    }
+    .btn-download {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      padding: 16px 36px;
+      border-radius: 6px;
+      letter-spacing: .02em;
+      margin-bottom: 40px;
+    }
+    .btn-download:hover { opacity: .92; }
+    .mantra {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--gold);
+      line-height: 1.7;
+    }
+    .footer {
+      margin-top: 48px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="gold-line"></div>
+    <h1 class="heading">Seu guia está pronto.</h1>
+    <p class="body-text">
+      "Os 3 lugares onde toda crise mora" já pode ser baixado —<br>
+      clique no botão abaixo pra abrir o PDF.
+    </p>
+    <a class="btn-download" href="ebook-os-3-lugares-da-crise.pdf" download>Baixar o guia (PDF)</a>
+    <p class="mantra">
+      Honre o passado.<br>
+      Faça parte do presente.<br>
+      Construa seu legado para o futuro.
+    </p>
+    <div class="footer">Tríade do Legado · Bárbara Quercetti</div>
+  </div>
+</body>
+</html>
