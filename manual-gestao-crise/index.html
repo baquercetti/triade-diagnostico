@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empreender é a Arte da Guerra — Manual de Gestão de Crise | Bárbara Quercetti</title>
+<meta name="description" content="Um plano de guerrilha para empresários que precisam decidir sob pressão e não podem errar por impulso. Por Bárbara Quercetti.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #111E29;
+    --gold:     #BC9B5F;
+    --wine:     #571C25;
+    --white:    #FFFFFF;
+    --off:      #EAEAEA;
+    --muted:    #6B7680;
+    --line:     #D6D6D6;
+    --font-display: "Cormorant Garamond", Georgia, serif;
+    --font-label:   "Raleway", system-ui, sans-serif;
+    --font-body:    "Montserrat", system-ui, sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+  body{background:var(--white);color:var(--navy);font-family:var(--font-body);font-size:17px;line-height:1.7;overflow-x:hidden;}
+  img{max-width:100%;display:block;}
+  h1,h2,h3{font-family:var(--font-display);color:var(--navy);line-height:1.15;font-weight:600;}
+  .container{max-width:720px;margin:0 auto;padding:0 24px;}
+  section{padding:64px 0;}
+  .eyebrow{font-family:var(--font-label);font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .lead{font-size:19px;color:var(--muted);line-height:1.8;}
+  p{margin-bottom:18px;}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--navy);}
+
+  /* HERO */
+  .hero{background:var(--navy);color:var(--white);padding:56px 0 48px;text-align:center;}
+  .hero .eyebrow{color:var(--gold);}
+  .hero h1{color:var(--white);font-size:clamp(28px,5.2vw,42px);margin-bottom:18px;}
+  .hero .sub{color:rgba(255,255,255,.72);font-size:18px;max-width:560px;margin:0 auto 30px;line-height:1.7;}
+  .hero-mech{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 auto 32px;max-width:560px;}
+  .hero-mech span{font-family:var(--font-label);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--white);border:1px solid rgba(188,155,95,.55);padding:8px 14px;border-radius:999px;}
+  .isca-note{font-size:14px;color:rgba(255,255,255,.55);max-width:520px;margin:28px auto 0;font-style:italic;line-height:1.7;}
+
+  /* BUTTONS */
+  .btn{font-family:var(--font-body);font-size:16px;font-weight:600;padding:17px 30px;border-radius:8px;border:0;cursor:pointer;display:inline-block;text-decoration:none;transition:transform .25s,box-shadow .25s;text-align:center;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.18);}
+  .btn-accent{background:var(--gold);color:var(--navy);}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-block{display:block;width:100%;max-width:440px;margin:0 auto;}
+  .cta-wrap{text-align:center;margin-top:8px;}
+  .cta-micro{font-size:13px;color:var(--muted);margin-top:12px;}
+  .hero .cta-micro{color:rgba(255,255,255,.5);}
+
+  /* AUTHORITY */
+  .authority{background:var(--off);}
+  .authority blockquote{border-left:3px solid var(--gold);padding-left:22px;font-style:italic;color:var(--navy);font-size:18px;margin:24px 0;}
+  .numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:36px 0;text-align:center;}
+  .numbers .num{font-family:var(--font-display);font-size:clamp(26px,5vw,36px);color:var(--wine);font-weight:600;line-height:1;}
+  .numbers .label{font-family:var(--font-label);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+  /* ERROS list */
+  .erros{counter-reset:erro;}
+  .erro{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid var(--line);}
+  .erro:last-child{border-bottom:none;}
+  .erro-num{font-family:var(--font-display);font-size:26px;color:var(--gold);font-weight:600;flex-shrink:0;width:36px;}
+  .erro-body strong{display:block;margin-bottom:4px;}
+  .erro-body span{color:var(--muted);font-size:15.5px;}
+
+  /* TRIADE */
+  .triade{background:var(--navy);color:var(--white);}
+  .triade h2{color:var(--white);}
+  .triade .lead{color:rgba(255,255,255,.7);}
+  .pilares{display:grid;gap:16px;margin-top:36px;}
+  .pilar{background:rgba(255,255,255,.05);border:1px solid rgba(188,155,95,.3);border-radius:12px;padding:26px;}
+  .pilar .tag{font-family:var(--font-label);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+  .pilar h3{color:var(--white);font-size:22px;margin-bottom:8px;}
+  .pilar p{color:rgba(255,255,255,.65);font-size:15.5px;margin-bottom:0;}
+
+  /* VIDEO */
+  .video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;box-shadow:0 12px 40px rgba(17,30,41,.25);margin:24px 0;}
+  .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+
+  /* MODULOS */
+  .modulo{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .modulo:last-child{border-bottom:none;}
+  .modulo-num{font-family:var(--font-display);font-size:22px;color:var(--gold);width:30px;flex-shrink:0;}
+  .modulo p{margin-bottom:0;font-size:16px;}
+
+  /* PROVA */
+  .prova{background:var(--off);}
+  .prova .numbers{grid-template-columns:1fr;text-align:left;gap:12px;}
+  .prova .num-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding:14px 0;}
+  .prova .num-row:last-of-type{border-bottom:none;}
+  .prova .num-row .n{font-family:var(--font-display);font-size:22px;color:var(--wine);font-weight:600;}
+  .prova .num-row .d{font-size:14.5px;color:var(--muted);text-align:right;max-width:60%;}
+
+  /* ANTES DEPOIS */
+  .ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;}
+  .ad-col{border-radius:12px;padding:22px 20px;}
+  .ad-col.antes{background:#F7EDEC;border:1px solid rgba(87,28,37,.18);}
+  .ad-col.depois{background:#F3EFE6;border:1px solid rgba(188,155,95,.3);}
+  .ad-title{font-family:var(--font-label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:600;}
+  .ad-col.antes .ad-title{color:var(--wine);}
+  .ad-col.depois .ad-title{color:#8a6d1f;}
+  .ad-col ul{list-style:none;}
+  .ad-col li{font-size:14px;padding:7px 0;line-height:1.5;color:var(--navy);}
+  @media (max-width:560px){.ad-grid{grid-template-columns:1fr;}}
+
+  /* OFERTA */
+  .oferta{background:var(--navy);color:var(--white);}
+  .oferta h2{color:var(--white);}
+  .oferta-card{background:rgba(255,255,255,.04);border:1px solid rgba(188,155,95,.35);border-radius:16px;padding:36px 28px;margin-top:32px;}
+  .oferta ul{list-style:none;margin-bottom:28px;}
+  .oferta li{padding:10px 0;padding-left:26px;position:relative;color:rgba(255,255,255,.85);font-size:15.5px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .oferta li:last-child{border-bottom:none;}
+  .oferta li::before{content:"—";position:absolute;left:0;color:var(--gold);}
+  .price-row{text-align:center;margin:28px 0;}
+  .price-row .price{font-family:var(--font-display);font-size:56px;color:var(--gold);font-weight:600;line-height:1;}
+  .price-row .price small{font-size:22px;vertical-align:top;}
+  .price-note{font-size:14.5px;color:rgba(255,255,255,.6);max-width:420px;margin:14px auto 0;line-height:1.7;}
+  .guarantee{display:flex;gap:16px;align-items:flex-start;background:rgba(255,255,255,.04);border-radius:12px;padding:20px;margin-top:28px;}
+  .guarantee .seal{font-size:32px;flex-shrink:0;}
+  .guarantee h4{color:var(--white);font-family:var(--font-body);font-size:15px;font-weight:600;margin-bottom:6px;}
+  .guarantee p{color:rgba(255,255,255,.6);font-size:14px;margin-bottom:0;}
+  .bump{background:rgba(188,155,95,.08);border:1px dashed rgba(188,155,95,.5);border-radius:12px;padding:22px;margin-top:20px;}
+  .bump h4{color:var(--gold);font-family:var(--font-body);font-size:15px;font-weight:600;margin-bottom:8px;}
+  .bump p{color:rgba(255,255,255,.65);font-size:14.5px;margin-bottom:0;}
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid var(--line);padding:22px 0;}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--navy);margin-bottom:10px;}
+  .faq-a{font-size:15.5px;color:var(--muted);margin-bottom:0;}
+
+  /* FOOTER CTA */
+  .final-cta{background:var(--wine);color:var(--white);text-align:center;}
+  .final-cta h2{color:var(--white);}
+  .final-cta .lead{color:rgba(255,255,255,.75);}
+  .final-cta .btn-accent{margin-top:24px;}
+
+  footer{padding:32px 0;text-align:center;font-size:12.5px;color:var(--muted);}
+
+  @media (max-width:560px){
+    section{padding:48px 0;}
+    .numbers{grid-template-columns:1fr;gap:20px;}
+    .price-row .price{font-size:46px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow">Bárbara Quercetti</div>
+    <h1>Assumi uma empresa com 12 milhões em dívida sem saber por onde começar.</h1>
+    <p class="sub">O que me salvou não foi trabalhar mais. Foi descobrir onde exatamente a crise estava.</p>
+
+    <div class="hero-mech">
+      <span>Sistema</span><span>Indivíduo</span><span>Ação</span>
+    </div>
+
+    <p class="sub" style="font-size:16px;max-width:520px;">
+      Toda crise mora em três lugares ao mesmo tempo. Enquanto você não sabe qual dos três está cedendo debaixo de você, trabalha muito e acerta pouco — corta o custo errado, pega o dinheiro errado, adia a conversa que era pra ter sido ontem.
+    </p>
+
+    <div class="cta-wrap" style="margin-top:32px;">
+      <a href="https://chk.eduzz.com/G961PDK5W1" class="btn btn-accent btn-block">Quero clareza para decidir com responsabilidade</a>
+      <div class="cta-micro">Manual digital · R$ 89 · acesso imediato</div>
+    </div>
+
+    <p class="isca-note">O ebook "Os 3 Lugares da Crise" te mostrou onde. Este manual te dá o plano de guerrilha inteiro. Saber onde dói não é o mesmo que saber lutar.</p>
+  </div>
+</header>
+
+<!-- AUTORIDADE -->
+<section class="authority">
+  <div class="container">
+    <div class="eyebrow">Quem está falando com você</div>
+    <p>Em 2019 meu pai me contou que a empresa da família estava com 12 milhões em dívida. Ele já tinha tido um infarto. O plano de saúde tinha acabado de ser cancelado. Tinha família dependendo do que eu decidisse a seguir, e eu não entendia nada do setor.</p>
+    <p>Eu não sabia, com número na mão, quanto tempo o caixa aguentava. Geria por sensação, não por dado. E sensação, numa dívida de doze milhões, só alimenta o medo.</p>
+    <p>Ligava pro banco de manhã. Tentava contornar meu pai à tarde. Chegava em casa e ainda tentava ser inteira pro meu filho pequeno, que só queria uma mãe presente. No fim do dia eu sentia que não tinha resolvido nada. Só cansaço.</p>
+    <p><strong>O que mudou não foi o esforço. Foi eu parar de tratar três problemas diferentes como se fossem um só.</strong></p>
+    <p>Fui em cada banco e em cada fornecedor com número real na mão. Nada de prazo que eu não sabia se cumpria.</p>
+    <blockquote>"Se você parar de me fornecer, eu não vou conseguir te pagar." Não porque eu era corajosa. Porque era a única verdade que eu tinha pra oferecer.</blockquote>
+    <p>Foram nove meses de negociação. Mão tremendo em reunião. Um ano ouvindo antes de questionar qualquer coisa.</p>
+
+    <div class="numbers">
+      <div><div class="num">R$ 12M</div><div class="label">Dívida ao assumir</div></div>
+      <div><div class="num">R$ 47M</div><div class="label">Faturamento 6 anos depois</div></div>
+      <div><div class="num">130</div><div class="label">Famílias que seguiram empregadas</div></div>
+    </div>
+
+    <p>Eu não aprendi isso em livro. Aprendi porque precisei. E o custo de aprender sem mapa foi tempo, saúde, noites que eu não recupero e pessoas que eu perdi no caminho.</p>
+    <p><strong>Você não precisa pagar esse preço pra aprender o que eu já aprendi na prática.</strong></p>
+  </div>
+</section>
+
+<!-- OS 5 ERROS -->
+<section>
+  <div class="container">
+    <div class="eyebrow">O que realmente derruba empresas em crise</div>
+    <h2 style="font-size:clamp(24px,4vw,32px);margin-bottom:20px;">Empresas não quebram de repente. Elas cedem aos poucos — quase sempre pelos mesmos motivos.</h2>
+    <p class="lead" style="margin-bottom:32px;">Em crise, não vence quem faz mais. Vence quem escolhe melhor. Cada decisão errada consome caixa, energia e confiança do time.</p>
+
+    <div class="erros">
+      <div class="erro"><div class="erro-num">1</div><div class="erro-body"><strong>Negação da realidade</strong><span>Adiar decisões esperando que "o próximo mês resolva".</span></div></div>
+      <div class="erro"><div class="erro-num">2</div><div class="erro-body"><strong>Dinheiro ruim disfarçado de alívio</strong><span>Empréstimos caros, acordos mal feitos, fôlego curto.</span></div></div>
+      <div class="erro"><div class="erro-num">3</div><div class="erro-body"><strong>Corte cego de custos</strong><span>Reduzir o que sustenta a operação e manter o que não gera caixa.</span></div></div>
+      <div class="erro"><div class="erro-num">4</div><div class="erro-body"><strong>Decisões emocionais</strong><span>Agir por medo, culpa ou pressão externa.</span></div></div>
+      <div class="erro"><div class="erro-num">5</div><div class="erro-body"><strong>Falta de prioridade</strong><span>Tratar tudo como urgente e não resolver o que é vital.</span></div></div>
+    </div>
+
+    <div class="cta-wrap" style="margin-top:36px;">
+      <a href="https://chk.eduzz.com/G961PDK5W1" class="btn btn-primary btn-block">Quero sair do modo reativo antes que piore</a>
+    </div>
+  </div>
+</section>
+
+<!-- MECANISMO -->
+<section class="triade">
+  <div class="container">
+    <div class="eyebrow">O mecanismo</div>
+    <h2 style="font-size:clamp(24px,4vw,32px);">A Tríade do Legado</h2>
+    <p class="lead" style="margin-top:14px;">Toda crise se manifesta em três níveis. Quando você entende qual deles está cedendo, as decisões deixam de ser reativas e passam a ser estratégicas.</p>
+
+    <div class="pilares">
+      <div class="pilar">
+        <div class="tag">01 · Sistema</div>
+        <h3>A estrutura</h3>
+        <p>Caixa, custos, dívidas, processos, contratos. Quando o sistema falha, a empresa sangra silenciosamente.</p>
+      </div>
+      <div class="pilar">
+        <div class="tag">02 · Indivíduo</div>
+        <h3>O líder</h3>
+        <p>Postura, clareza emocional, capacidade de sustentar decisões difíceis. Quando o indivíduo colapsa, a empresa perde direção.</p>
+      </div>
+      <div class="pilar">
+        <div class="tag">03 · Ação</div>
+        <h3>O movimento</h3>
+        <p>Decidir, priorizar, executar com coerência. Quando a ação é errada ou atrasada, a crise se prolonga.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:32px;color:rgba(255,255,255,.7);">Você não sai motivado. Você sai orientado.</p>
+  </div>
+</section>
+
+<!-- VSL -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Antes de continuar</div>
+    <h2 style="font-size:clamp(22px,4vw,28px);margin-bottom:20px;">Assista — 3 minutos</h2>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/X4s5iFm1blo" title="Manual de Gestão de Crise — Bárbara Quercetti" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- MODULOS -->
+<section style="background:var(--off);">
+  <div class="container">
+    <div class="eyebrow">O que tem dentro</div>
+    <h2 style="font-size:clamp(24px,4vw,30px);margin-bottom:28px;">Um plano de guerrilha, não uma teoria</h2>
+
+    <div class="modulos">
+      <div class="modulo"><div class="modulo-num">1</div><p><strong>Diagnosticar antes de agir</strong> — leia a realidade da empresa com frieza e evite decisões precipitadas que drenam caixa e energia.</p></div>
+      <div class="modulo"><div class="modulo-num">2</div><p><strong>Entender para onde o dinheiro realmente está indo</strong> — pare de "achar" e enxergue com clareza o fluxo de caixa e as dívidas que colocam a empresa em risco.</p></div>
+      <div class="modulo"><div class="modulo-num">3</div><p><strong>Definir a hierarquia da sobrevivência</strong> — o que precisa ser protegido primeiro, e o que pode (e deve) ser cortado sem destruir o futuro.</p></div>
+      <div class="modulo"><div class="modulo-num">4</div><p><strong>Separar dinheiro bom de dinheiro ruim</strong> — reconheça soluções que aliviam agora e pioram o cenário depois.</p></div>
+      <div class="modulo"><div class="modulo-num">5</div><p><strong>Comunicar a verdade sem romper relações</strong> — alinhe time, parceiros e família em momentos de pressão.</p></div>
+      <div class="modulo"><div class="modulo-num">6</div><p><strong>Tomar decisões difíceis com menos desgaste emocional</strong> — sustente escolhas impopulares sem perder autoridade nem humanidade.</p></div>
+      <div class="modulo"><div class="modulo-num">7</div><p><strong>Preparar a empresa para voltar a crescer</strong> — saia do modo sobrevivência e crie base para reconstrução do futuro.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA -->
+<section class="prova">
+  <div class="container">
+    <div class="eyebrow">Os números que eu posso provar</div>
+    <p class="lead" style="margin-bottom:8px;">Eu não vou te mostrar depoimento de aluno que você não sabe se existe. Vou te mostrar o único caso que eu posso responder por inteiro: o meu.</p>
+
+    <div class="numbers">
+      <div class="num-row"><span class="n">R$ 12M</span><span class="d">em dívida quando assumi a empresa</span></div>
+      <div class="num-row"><span class="n">R$ 47M</span><span class="d">de faturamento seis anos depois</span></div>
+      <div class="num-row"><span class="n">130</span><span class="d">famílias que continuaram empregadas</span></div>
+      <div class="num-row"><span class="n">9 meses</span><span class="d">de negociação com banco e fornecedor, sem um acordo quebrado</span></div>
+      <div class="num-row"><span class="n">300+</span><span class="d">empresários já passaram pela Imersão, pelas palestras e pelo acompanhamento da Tríade do Legado</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANTES / DEPOIS -->
+<section>
+  <div class="container">
+    <div class="eyebrow">O que muda depois da leitura</div>
+    <h2 style="font-size:clamp(24px,4vw,30px);">Clareza não elimina o peso da liderança. Mas elimina o caos interno.</h2>
+
+    <div class="ad-grid">
+      <div class="ad-col antes">
+        <div class="ad-title">Antes</div>
+        <ul>
+          <li>Decisões tomadas no cansaço</li>
+          <li>Sensação constante de urgência</li>
+          <li>Caixa curto sem saber por onde começar</li>
+          <li>Medo de errar paralisando escolhas</li>
+          <li>Tentar resolver tudo ao mesmo tempo</li>
+        </ul>
+      </div>
+      <div class="ad-col depois">
+        <div class="ad-title">Depois</div>
+        <ul>
+          <li>Clareza sobre o que é prioridade real</li>
+          <li>Decisões mais frias, mesmo sob pressão</li>
+          <li>Leitura objetiva do caixa e das dívidas</li>
+          <li>Capacidade de dizer "não" ao que drena energia</li>
+          <li>Um plano possível para sair do modo reativo</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFERTA -->
+<section class="oferta" id="oferta">
+  <div class="container">
+    <div class="eyebrow">O que você leva</div>
+    <h2 style="font-size:clamp(24px,4vw,30px);">Empreender é a Arte da Guerra</h2>
+    <p class="lead" style="margin-top:10px;color:rgba(255,255,255,.7);">Manual de Gestão de Crise · plano de guerrilha para empresários que precisam decidir sob pressão.</p>
+
+    <div class="oferta-card">
+      <ul>
+        <li>O Raio-X da Tríade do Legado — separa se o que está cedendo é o sistema, o indivíduo ou a ação</li>
+        <li>A hierarquia da sobrevivência — o que proteger primeiro, o que cortar sem destruir o futuro</li>
+        <li>Critério para dinheiro bom e dinheiro ruim em cenários instáveis</li>
+        <li>Como falar a verdade sem romper relação — time, fornecedor, banco, família</li>
+        <li>Postura de liderança para atravessar o caos sem se perder</li>
+        <li>Acesso imediato — chega no seu e-mail em minutos</li>
+      </ul>
+
+      <div class="price-row">
+        <div class="price"><small>R$</small> 89</div>
+        <p class="price-note">Eu não vou fingir que isso é um desconto. Isso é o preço. É menos do que você perde num único dia decidindo no escuro — menos que a multa de um boleto priorizado errado.</p>
+      </div>
+
+      <div class="cta-wrap">
+        <a href="https://chk.eduzz.com/G961PDK5W1" class="btn btn-accent btn-block">Quero o manual — acesso imediato</a>
+      </div>
+
+      <div class="guarantee">
+        <div class="seal">🛡️</div>
+        <div>
+          <h4>Garantia de 7 dias. O risco é meu.</h4>
+          <p>Leia o manual, aplique o Raio-X na sua empresa. Se em 7 dias você não conseguir dizer com clareza qual dos três lugares está cedendo debaixo de você, peça o reembolso. Sem burocracia. Sem justificativa.</p>
+        </div>
+      </div>
+
+      <div class="bump">
+        <h4>+ Kit Prático de Ferramentas para Gestão de Crise — R$ 37</h4>
+        <p>Checklist mensal de caixa, mapa da dívida, relatório de uma página pro dono e roteiro de reunião de gestão — as ferramentas que eu uso até hoje na gestão real. O manual mostra o que fazer; o kit garante que você faça, com constância. Disponível como opção dentro do checkout.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Isso é para mim?</div>
+    <h2 style="font-size:clamp(24px,4vw,30px);margin-bottom:8px;">Se você chegou até aqui, provavelmente está se fazendo algumas perguntas</h2>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">"Eu não entendo de números."</div>
+        <p class="faq-a">Você não precisa ser financeiro. Precisa enxergar o que importa. O manual não foi feito para especialistas — foi feito para líderes que precisam decidir com base na realidade, mesmo sem dominar termos técnicos. Clareza vem antes da técnica.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Já tentei de tudo."</div>
+        <p class="faq-a">Talvez você tenha tentado agir sem um diagnóstico claro — cortar, negociar, insistir, postergar. Aqui, o ponto de partida é diferente: entender antes de agir. Isso muda a sequência e a consequência das decisões.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Minha empresa é pequena / minha crise é diferente."</div>
+        <p class="faq-a">Crises mudam de tamanho, mas não mudam de lógica. Quando o caixa aperta, as decisões erradas custam mais, independentemente do porte da empresa. Este material não fala de escala — fala de critério.</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Não tenho tempo."</div>
+        <p class="faq-a">Crise não respeita agenda. E decisões erradas consomem muito mais tempo do que decisões conscientes. Este material foi feito para ser direto e aplicável — para líderes que precisam decidir, não estudar por meses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="final-cta">
+  <div class="container">
+    <div class="eyebrow" style="color:rgba(255,255,255,.6);">Crise não se resolve com esperança</div>
+    <h2>Se resolve com leitura correta da realidade.</h2>
+    <p class="lead">R$ 89. Acesso imediato. Garantia de 7 dias.</p>
+    <a href="https://chk.eduzz.com/G961PDK5W1" class="btn btn-accent">Quero clareza para decidir com responsabilidade</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">Bárbara Quercetti — Tríade do Legado</div>
+</footer>
+
+</body>
+</html>
