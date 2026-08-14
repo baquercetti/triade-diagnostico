@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seu diagnóstico — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #111E29;
+      --gold: #BC9B5F;
+      --burgundy: #571C25;
+      --white: #FFFFFF;
+      --muted: rgba(255,255,255,.7);
+    }
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 24px;
+    }
+    .wrap { max-width: 600px; text-align: center; }
+    .gold-line { width: 48px; height: 2px; background: var(--gold); margin: 0 auto 28px; }
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 18px;
+    }
+    .heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 5vw, 34px);
+      font-weight: 600; line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .arquetipo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(30px, 6.5vw, 46px);
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+    .body-text {
+      font-size: 15.5px; color: var(--muted); line-height: 1.85; margin-bottom: 36px;
+      text-align: left;
+    }
+
+    /* ── BARRAS DOS 3 PILARES ── */
+    .pilares {
+      text-align: left;
+      margin: 0 0 36px;
+      padding: 22px 24px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px;
+    }
+    .pilar-row { margin-bottom: 18px; }
+    .pilar-row:last-child { margin-bottom: 0; }
+    .pilar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.85);
+      margin-bottom: 8px;
+    }
+    .pilar-label span.pct { color: var(--gold); font-weight: 700; }
+    .pilar-track {
+      height: 8px;
+      background: rgba(255,255,255,.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .pilar-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 999px;
+      width: 0%;
+      transition: width .6s ease;
+    }
+    .pilar-frail .pilar-fill { background: var(--burgundy); }
+
+    .cta-row { margin-bottom: 40px; }
+    .btn-cta {
+      display: inline-block;
+      background: var(--gold); color: #24190B;
+      font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 15px 36px; border-radius: 8px; text-decoration: none;
+      letter-spacing: .2px;
+      transition: transform .2s ease;
+    }
+    .btn-cta:hover { transform: translateY(-2px); }
+    .cta-note { font-size: 12.5px; color: rgba(255,255,255,.5); margin-top: 14px; }
+    .mantra {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 16px; color: var(--gold); line-height: 1.7;
+    }
+    .footer {
+      margin-top: 40px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="gold-line"></div>
+    <div class="eyebrow">Diagnóstico da Arquitetura de Sucessão</div>
+    <h1 class="heading" id="heading">Recebi o seu diagnóstico.</h1>
+    <div class="arquetipo-name" id="arquetipoName"></div>
+    <p class="body-text" id="bodyText"></p>
+
+    <div class="pilares">
+      <div class="pilar-row" id="rowSistema">
+        <div class="pilar-label"><span>Sistema — a estrutura</span><span class="pct" id="pctSistema">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillSistema"></div></div>
+      </div>
+      <div class="pilar-row" id="rowIndividuo">
+        <div class="pilar-label"><span>Indivíduo — a força emocional</span><span class="pct" id="pctIndividuo">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillIndividuo"></div></div>
+      </div>
+      <div class="pilar-row" id="rowAcao">
+        <div class="pilar-label"><span>Ação — a coragem de decidir</span><span class="pct" id="pctAcao">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillAcao"></div></div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a href="https://baquercetti.github.io/triade-diagnostico/" class="btn-cta">Se isso ressoou, o próximo passo é uma conversa</a>
+      <p class="cta-note">Você vai pro formulário de aplicação — a Bárbara e a equipe entram em contato pra agendar.</p>
+    </div>
+
+    <p class="mantra">
+      Honre o passado.<br>
+      Faça parte do presente.<br>
+      Construa seu legado para o futuro.
+    </p>
+    <div class="footer">Tríade do Legado · Bárbara Quercetti</div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var arquetipo = params.get('arquetipo') || '';
+    var nome = params.get('nome') || '';
+    var empresa = params.get('empresa') || 'sua empresa';
+    var sistema = parseInt(params.get('sistema'), 10);
+    var individuo = parseInt(params.get('individuo'), 10);
+    var acao = parseInt(params.get('acao'), 10);
+    if (isNaN(sistema)) sistema = 0;
+    if (isNaN(individuo)) individuo = 0;
+    if (isNaN(acao)) acao = 0;
+
+    var leituras = {
+      'Legado em Risco Estrutural': 'A ' + empresa + ' ainda depende de pessoas, não de estrutura. O que sustenta o dia a dia hoje é a presença de quem está à frente — não um sistema que continua de pé mesmo quando alguém falta. Isso não é falta de vontade. É falta de arquitetura: regras, papéis e processos que ainda não foram escritos.',
+      'Sucessão Travada pelo Silêncio': 'A estrutura da ' + empresa + ' pode até existir — mas quem deveria sustentá-la ainda está pedindo licença pra ocupar o lugar. Autoridade delegada (cargo, sobrenome, participação) não é a mesma coisa que autoridade interna. E é essa segunda que ainda precisa ser construída.',
+      'Potencial Represado': 'A ' + empresa + ' tem base — sistema e liderança já sustentam o dia a dia. O que trava é a coragem de mudar o que sempre foi feito de um jeito só. O mito fundacional, quando não é revisitado, começa a agir como freio.',
+      'Arquitetura em Consolidação': 'Não existe um ponto que já quebrou — existe um conjunto que ainda está em construção, de forma parecida nos três pilares. Já há consciência e alguns alicerces. O momento agora é formalizar o que já se pratica, antes que uma crise force a decisão.',
+      'Ponto de Inflexão': 'Sistema, indivíduo e ação estão, ao mesmo tempo, na zona mais vulnerável. A sucessão nunca é um "se" — é apenas um "quando". Quem não prepara a continuidade está desenhando o próprio fim, e o relógio já está correndo.'
+    };
+
+    document.getElementById('heading').textContent = nome ? ('Obrigada, ' + nome.split(' ')[0] + '.') : 'Recebi o seu diagnóstico.';
+    document.getElementById('arquetipoName').textContent = arquetipo || 'Arquitetura da Sucessão';
+    document.getElementById('bodyText').textContent = leituras[arquetipo] || 'Vou analisar o cenário da sua empresa e volto com uma leitura sobre onde está a fragilidade real da sua sucessão.';
+
+    function fillBar(pctId, fillId, rowId, value) {
+      document.getElementById(pctId).textContent = value + '%';
+      requestAnimationFrame(function () {
+        document.getElementById(fillId).style.width = value + '%';
+      });
+      if (value <= 40) document.getElementById(rowId).classList.add('pilar-frail');
+    }
+    fillBar('pctSistema', 'fillSistema', 'rowSistema', sistema);
+    fillBar('pctIndividuo', 'fillIndividuo', 'rowIndividuo', individuo);
+    fillBar('pctAcao', 'fillAcao', 'rowAcao', acao);
+  </script>
+</body>
+</html>
