@@ -3,155 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seu diagnóstico — Tríade do Legado</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta http-equiv="refresh" content="0; url=../diagnostico-tributario/obrigada.html">
+  <link rel="canonical" href="https://baquercetti.github.io/triade-diagnostico/diagnostico-tributario/obrigada.html">
+  <title>Diagnóstico Tributário — Tríade do Legado</title>
+  <script>window.location.replace('../diagnostico-tributario/obrigada.html' + window.location.search);</script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy: #111E29;
-      --gold: #BC9B5F;
-      --burgundy: #571C25;
-      --white: #FFFFFF;
-      --muted: rgba(255,255,255,.7);
-    }
-    body {
-      font-family: 'Montserrat', system-ui, sans-serif;
-      background: var(--navy);
-      color: var(--white);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 56px 24px;
-    }
-    .wrap { max-width: 560px; text-align: center; }
-    .gold-line { width: 48px; height: 2px; background: var(--gold); margin: 0 auto 28px; }
-    .eyebrow {
-      font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 18px;
-    }
-    .heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(28px, 5.5vw, 44px);
-      font-weight: 600; line-height: 1.2;
-      margin-bottom: 8px;
-    }
-    .nivel-badge {
-      display: inline-block;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px; font-weight: 600; letter-spacing: .04em;
-      padding: 7px 18px;
-      border-radius: 999px;
-      margin: 14px 0 28px;
-      border: 1.5px solid var(--gold);
-      color: var(--gold);
-    }
-    .nivel-badge.critica { background: var(--burgundy); border-color: var(--burgundy); color: #fff; }
-    .nivel-badge.alta { background: rgba(87,28,37,.35); }
-    .body-text {
-      font-size: 15.5px; color: var(--muted); line-height: 1.85; margin-bottom: 24px;
-      text-align: left;
-    }
-    .motivos {
-      text-align: left;
-      list-style: none;
-      margin: 0 0 32px;
-      padding: 20px 22px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 10px;
-    }
-    .motivos li {
-      font-size: 14px; color: rgba(255,255,255,.85);
-      padding-left: 18px; position: relative; margin-bottom: 10px; line-height: 1.6;
-    }
-    .motivos li:last-child { margin-bottom: 0; }
-    .motivos li::before {
-      content: "—"; position: absolute; left: 0; color: var(--gold);
-    }
-    .cta-row { margin-bottom: 40px; }
-    .btn-cta {
-      display: inline-block;
-      background: var(--gold); color: #24190B;
-      font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600;
-      padding: 15px 36px; border-radius: 8px; text-decoration: none;
-      letter-spacing: .2px;
-      transition: transform .2s ease;
-    }
-    .btn-cta:hover { transform: translateY(-2px); }
-    .cta-note { font-size: 12.5px; color: rgba(255,255,255,.5); margin-top: 14px; }
-    .mantra {
-      font-family: 'Cormorant Garamond', serif; font-style: italic;
-      font-size: 16px; color: var(--gold); line-height: 1.7;
-    }
-    .footer {
-      margin-top: 40px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(255,255,255,.3);
-    }
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; background: #F5F4F2; color: #111E29; }
+    .wrap { min-height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+    a { color: #BC9B5F; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="gold-line"></div>
-    <div class="eyebrow">Diagnóstico recebido</div>
-    <h1 class="heading" id="heading">Recebi o seu diagnóstico.</h1>
-    <div class="nivel-badge" id="nivelBadge" style="display:none"></div>
-    <p class="body-text" id="bodyText"></p>
-    <ul class="motivos" id="motivosList" style="display:none"></ul>
-    <div class="cta-row">
-      <a href="#" id="ctaBtn" class="btn-cta" target="_blank" rel="noopener">Agendar uma conversa</a>
-      <p class="cta-note">Você vai pro WhatsApp da Bárbara com uma mensagem já pronta.</p>
-    </div>
-    <p class="mantra">
-      Honre o seu passado.<br>
-      Faça parte do presente.<br>
-      Construa o seu legado.
-    </p>
-    <div class="footer">Tríade do Legado · Bárbara Quercetti</div>
+    <p>Este link mudou de endereço.<br>Se você não for redirecionado automaticamente, <a href="../diagnostico-tributario/obrigada.html">clique aqui</a>.</p>
   </div>
-
-  <script>
-    var params = new URLSearchParams(window.location.search);
-    var nivel = params.get('nivel') || '';
-    var empresa = params.get('empresa') || 'sua empresa';
-    var nome = params.get('nome') || '';
-    var motivos = [params.get('m1'), params.get('m2'), params.get('m3')].filter(Boolean);
-
-    var mensagens = {
-      'Baixa': 'A situação da ' + empresa + ' ainda está numa zona administrável. Isso não significa que pode esperar — só significa que hoje você tem mais opções na mesa do que vai ter depois.',
-      'Média': 'Existem sinais reais de atenção na situação da ' + empresa + '. Ainda dá pra agir com estratégia, sem desespero — mas esse é o momento certo pra isso.',
-      'Alta': 'A situação da ' + empresa + ' está numa zona de risco real. O que você marcou mostra sinais que costumam se agravar rápido quando ficam sem resposta.',
-      'Crítica': 'O que você descreveu sobre a ' + empresa + ' pede decisão rápida. Eu já estive dentro de uma dívida de R$12 milhões — sei o peso disso. Dá pra sair, mas não dá pra esperar.'
-    };
-
-    if (nivel && mensagens[nivel]) {
-      document.getElementById('heading').textContent = nome ? ('Obrigada, ' + nome.split(' ')[0] + '.') : 'Recebi o seu diagnóstico.';
-      var badge = document.getElementById('nivelBadge');
-      badge.textContent = 'Grau de criticidade: ' + nivel;
-      badge.style.display = 'inline-block';
-      if (nivel === 'Crítica') badge.classList.add('critica');
-      if (nivel === 'Alta') badge.classList.add('alta');
-      document.getElementById('bodyText').textContent = mensagens[nivel];
-    } else {
-      document.getElementById('bodyText').textContent = 'Vou analisar o cenário da sua empresa e volto com o caminho possível — com os parceiros certos para o seu caso.';
-    }
-
-    if (motivos.length) {
-      var list = document.getElementById('motivosList');
-      motivos.forEach(function (m) {
-        var li = document.createElement('li');
-        li.textContent = m.charAt(0).toUpperCase() + m.slice(1);
-        list.appendChild(li);
-      });
-      list.style.display = 'block';
-    }
-
-    var waText = 'Olá Bárbara, preenchi o diagnóstico de dívida tributária da ' + empresa + '.';
-    if (nivel) waText += ' Meu grau de criticidade ficou: ' + nivel + '.';
-    waText += ' Quero agendar uma conversa.';
-    document.getElementById('ctaBtn').href = 'https://wa.me/5511926331795?text=' + encodeURIComponent(waText);
-  </script>
 </body>
 </html>
