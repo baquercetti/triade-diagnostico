@@ -365,7 +365,7 @@
     <div class="step" data-condition="all">
       <div class="block-eyebrow">Bloco 01 · A Empresa</div>
       <div class="step-question">Qual é o CNPJ?</div>
-      <input type="text" name="04. CNPJ" placeholder="00.000.000/0000-00">
+      <input type="text" name="04. CNPJ" placeholder="00.000.000/0000-00" required>
     </div>
 
     <div class="step" data-condition="all">
@@ -383,7 +383,7 @@
     <div class="step" data-condition="all">
       <div class="block-eyebrow">Bloco 01 · A Empresa</div>
       <div class="step-question">Qual é o setor de atuação da empresa?</div>
-      <input type="text" name="07. Setor de atuação" placeholder="Ex: indústria metroferroviária, varejo, construção civil...">
+      <input type="text" name="07. Setor de atuação" placeholder="Ex: indústria metroferroviária, varejo, construção civil..." required>
     </div>
 
     <div class="step" data-condition="all">
@@ -566,6 +566,24 @@
     <!-- BLOCO 04 — FECHAMENTO -->
     <div class="step" data-condition="all">
       <div class="block-eyebrow">Bloco 04 · Fechamento</div>
+      <div class="step-question">Podemos entrar em contato com você para apresentar a análise da sua situação e os caminhos possíveis?</div>
+      <div class="yn-wrap">
+        <input type="radio" name="27. Autorização de contato para apresentar análise" id="t27a-s" value="Sim" required><label for="t27a-s">Sim</label>
+        <input type="radio" name="27. Autorização de contato para apresentar análise" id="t27a-n" value="Não"><label for="t27a-n">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Fechamento</div>
+      <div class="step-question">Você está ciente de que as informações preenchidas neste diagnóstico serão enviadas e utilizadas para essa análise?</div>
+      <div class="yn-wrap">
+        <input type="radio" name="28. Ciência do envio das informações" id="t28a-s" value="Sim, estou ciente" required><label for="t28a-s">Sim, estou ciente</label>
+        <input type="radio" name="28. Ciência do envio das informações" id="t28a-n" value="Não"><label for="t28a-n">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Fechamento</div>
       <div class="step-question">Como prefere ser contatado?</div>
       <div class="options">
         <input type="radio" name="24. Contato preferido" id="t24-1" value="WhatsApp"><label for="t24-1">WhatsApp</label>
@@ -652,10 +670,31 @@
     if (steps[index].id === 'termStep') requestAnimationFrame(checkTermScroll);
   }
 
+  function currentStepValid() {
+    const step = steps[current];
+    const requiredEls = step.querySelectorAll('[required]');
+    for (const el of requiredEls) {
+      if (el.type === 'radio') {
+        const checked = step.querySelector('input[name="' + CSS.escape(el.name) + '"]:checked');
+        if (!checked) { el.reportValidity(); return false; }
+      } else if (el.type === 'checkbox') {
+        if (!el.checked) { el.reportValidity(); return false; }
+      } else if (!el.value || !el.value.trim()) {
+        el.reportValidity();
+        return false;
+      }
+    }
+    return true;
+  }
+
   function goNext() {
     const vis = visibleSteps();
     const idx = vis.indexOf(steps[current]);
     const isLast = idx === vis.length - 1;
+
+    if (steps[current].id !== 'termStep' && !currentStepValid()) {
+      return;
+    }
 
     if (steps[current].id === 'termStep') {
       const lgpd = document.getElementById('lgpd');
