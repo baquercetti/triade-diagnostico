@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #111E29;
+      --gold:     #BC9B5F;
+      --burgundy: #571C25;
+      --white:    #FFFFFF;
+      --off:      #F5F4F2;
+      --muted:    #6B7680;
+      --border:   #D6D6D6;
+      --r:        8px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--off);
+      color: var(--navy);
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--navy);
+      padding: 14px 24px 0;
+    }
+    .top-bar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+    }
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: var(--white);
+      letter-spacing: .3px;
+    }
+    .step-counter {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,.45);
+      letter-spacing: .5px;
+    }
+    .progress-track { height: 3px; background: rgba(255,255,255,.15); }
+    .progress-fill { height: 100%; background: var(--gold); transition: width .35s ease; width: 0%; }
+
+    /* ── WRAPPER ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 100px;
+    }
+
+    /* ── STEP CARD ── */
+    .step { display: none; width: 100%; max-width: 640px; animation: fadeUp .22s ease; }
+    .step.active { display: block; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    .block-eyebrow {
+      font-size: 10px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    .step-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 600; line-height: 1.35; color: var(--navy); margin-bottom: 8px;
+    }
+    .step-hint { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .step-question + .options,
+    .step-question + .checks,
+    .step-question + .yn-wrap,
+    .step-question + .scale,
+    .step-question + input,
+    .step-question + textarea { margin-top: 28px; }
+
+    /* ── INPUTS ── */
+    input[type="text"], input[type="email"], input[type="tel"], textarea {
+      width: 100%; padding: 14px 0; border: none; border-bottom: 2px solid var(--border);
+      border-radius: 0; font-family: 'Montserrat', sans-serif; font-size: 16px;
+      color: var(--navy); background: transparent; outline: none; transition: border-color .2s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, textarea:focus { border-color: var(--gold); }
+    textarea { min-height: 90px; resize: none; }
+
+    /* ── SINGLE CHOICE ── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .options input[type="radio"] { display: none; }
+    .options label {
+      padding: 14px 18px; border: 1.5px solid var(--border); border-radius: var(--r);
+      cursor: pointer; font-size: 15px; transition: all .15s; background: var(--white);
+    }
+    .options input[type="radio"]:checked + label { border-color: var(--gold); background: rgba(188,155,95,.08); font-weight: 500; }
+
+    /* ── MULTI CHOICE ── */
+    .checks { display: flex; flex-direction: column; gap: 10px; }
+    .checks input[type="checkbox"] { display: none; }
+    .checks label {
+      padding: 14px 18px; border: 1.5px solid var(--border); border-radius: var(--r);
+      cursor: pointer; font-size: 15px; transition: all .15s; background: var(--white);
+    }
+    .checks input[type="checkbox"]:checked + label { border-color: var(--gold); background: rgba(188,155,95,.08); font-weight: 500; }
+
+    /* ── SCALE (1-5) ── */
+    .scale { display: flex; flex-direction: column; gap: 10px; }
+    .scale input[type="radio"] { display: none; }
+    .scale label {
+      display: flex; align-items: baseline; gap: 10px; padding: 14px 18px;
+      border: 1.5px solid var(--border); border-radius: var(--r);
+      cursor: pointer; font-size: 15px; transition: all .15s; background: var(--white);
+    }
+    .scale label .scale-num { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 18px; color: var(--gold); min-width: 16px; }
+    .scale input[type="radio"]:checked + label { border-color: var(--gold); background: rgba(188,155,95,.08); font-weight: 500; }
+
+    /* ── YES/NO ── */
+    .yn-wrap { display: flex; gap: 12px; }
+    .yn-wrap input[type="radio"] { display: none; }
+    .yn-wrap label {
+      flex: 1; padding: 14px; text-align: center; border: 1.5px solid var(--border);
+      border-radius: var(--r); cursor: pointer; font-size: 15px; font-weight: 500;
+      background: var(--white); transition: all .15s;
+    }
+    .yn-wrap input[type="radio"]:checked + label { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+    /* ── TERMO ── */
+    .term-box {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 18px 20px; max-height: 260px; overflow-y: auto;
+      font-size: 13px; line-height: 1.75; color: var(--muted); margin-bottom: 14px;
+    }
+    .term-box h4 { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+    .term-box p { margin-bottom: 10px; }
+    .term-box p:last-child { margin-bottom: 0; }
+    .term-box strong { color: var(--navy); }
+    .term-hint { font-size: 12.5px; color: var(--muted); margin-bottom: 16px; transition: color .2s; }
+    .consent-check {
+      display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--navy);
+      cursor: pointer; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--r); background: var(--white);
+    }
+    .consent-check input { margin-top: 3px; accent-color: var(--burgundy); flex-shrink: 0; }
+    .consent-check.is-disabled { cursor: not-allowed; opacity: .55; }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--white);
+      border-top: 1px solid var(--border); padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .nav-inner { width: 100%; max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .btn-back {
+      background: transparent; border: 1.5px solid var(--border); color: var(--muted);
+      padding: 12px 22px; border-radius: var(--r); font-family: 'Montserrat', sans-serif;
+      font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s;
+    }
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-back:disabled { opacity: .3; cursor: default; }
+    .btn-next {
+      background: var(--navy); color: var(--white); border: none; padding: 12px 32px;
+      border-radius: var(--r); font-family: 'Montserrat', sans-serif; font-size: 14px;
+      font-weight: 600; cursor: pointer; transition: background .15s; letter-spacing: .3px;
+    }
+    .btn-next:hover { background: #1c2f42; }
+    .btn-next.submit-btn { background: var(--gold); color: var(--navy); }
+    .btn-next.submit-btn:hover { background: #a8894e; }
+
+    /* ── INTRO ── */
+    .intro-card { text-align: center; max-width: 580px; }
+    .intro-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .intro-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 5vw, 42px); font-weight: 600; line-height: 1.2; color: var(--navy); margin-bottom: 20px; }
+    .intro-body { font-size: 15px; color: var(--muted); line-height: 1.9; margin-bottom: 32px; }
+    .intro-story { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--navy); line-height: 1.7; margin-bottom: 32px; }
+    .btn-start {
+      background: var(--navy); color: var(--white); border: none; padding: 15px 44px;
+      border-radius: var(--r); font-family: 'Montserrat', sans-serif; font-size: 15px;
+      font-weight: 600; cursor: pointer; letter-spacing: .3px; transition: background .15s;
+    }
+    .btn-start:hover { background: #1c2f42; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar" id="topBar" style="display:none">
+  <div class="top-bar-inner">
+    <span class="brand">Tríade do Legado</span>
+    <span class="step-counter" id="stepCounter"></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="page">
+
+  <!-- ── INTRO ── -->
+  <div class="intro-card" id="introCard">
+    <div class="intro-eyebrow">Bárbara Quercetti</div>
+    <h1 class="intro-title">Diagnóstico Tríade do Legado</h1>
+    <p class="intro-body">
+      Um diagnóstico baseado na minha metodologia autoral de Gestão
+      Integrada — Sistema, Indivíduo e Ação. Leva de 6 a 10 minutos, e no
+      final você recebe um resultado direto, construído a partir das suas
+      respostas — não um relatório genérico.
+    </p>
+    <p class="intro-story">"O que destrói empresas não aparece no balanço. Acontece no silêncio."</p>
+    <button class="btn-start" onclick="startForm()">Começar diagnóstico</button>
+  </div>
+
+  <!-- ── FORM ── -->
+  <form id="diagForm" action="https://formsubmit.co/quercettiproducoes@gmail.com" method="POST" style="display:none; width:100%">
+    <input type="hidden" name="_subject" value="Novo diagnóstico — Tríade do Legado">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" value="https://baquercetti.github.io/triade-diagnostico/diagnostico/obrigada.html">
+    <input type="hidden" name="_form" value="diagnostico">
+
+    <!-- ============ BLOCO 00 · QUEM É VOCÊ ============ -->
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">A empresa é um negócio familiar?</div>
+      <div class="step-hint">Considere familiar se foi fundada por você/sua família, ou se a gestão hoje é (ou já foi) de família.</div>
+      <div class="yn-wrap">
+        <input type="radio" name="00. Empresa familiar" id="fam-s" value="Sim" required><label for="fam-s">Sim</label>
+        <input type="radio" name="00. Empresa familiar" id="fam-n" value="Não"><label for="fam-n">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual é o seu nome completo?</div>
+      <input type="text" name="01. Nome completo" placeholder="Seu nome" required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual é o nome da empresa?</div>
+      <input type="text" name="02. Nome da empresa" placeholder="Nome da empresa" required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual o seu e-mail?</div>
+      <input type="email" name="03. E-mail" placeholder="seuemail@empresa.com" required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual o melhor WhatsApp para contato?</div>
+      <input type="tel" name="04. WhatsApp" placeholder="(11) 90000-0000" required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual o CNPJ da empresa?</div>
+      <input type="text" name="05. CNPJ" placeholder="00.000.000/0000-00" required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual é o setor de atuação da empresa?</div>
+      <input type="text" name="06. Setor de atuação" placeholder="Ex: indústria, varejo, construção civil..." required>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual o faturamento anual aproximado da empresa?</div>
+      <div class="options">
+        <input type="radio" name="07. Faturamento anual aproximado" id="fat-1" value="Até R$500 mil/ano" required><label for="fat-1">Até R$500 mil/ano</label>
+        <input type="radio" name="07. Faturamento anual aproximado" id="fat-2" value="R$500 mil a R$2 milhões/ano"><label for="fat-2">R$500 mil a R$2 milhões/ano</label>
+        <input type="radio" name="07. Faturamento anual aproximado" id="fat-3" value="R$2 a R$10 milhões/ano"><label for="fat-3">R$2 a R$10 milhões/ano</label>
+        <input type="radio" name="07. Faturamento anual aproximado" id="fat-4" value="R$10 a R$50 milhões/ano"><label for="fat-4">R$10 a R$50 milhões/ano</label>
+        <input type="radio" name="07. Faturamento anual aproximado" id="fat-5" value="Acima de R$50 milhões/ano"><label for="fat-5">Acima de R$50 milhões/ano</label>
+      </div>
+    </div>
+
+    <!-- PAPEL — ramifica por 00. Empresa familiar -->
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual é o seu papel na empresa hoje?</div>
+      <div class="options">
+        <input type="radio" name="08. Papel" id="pf" value="Fundador(a)" required><label for="pf">Fundador(a) — fui eu quem construiu o negócio</label>
+        <input type="radio" name="08. Papel" id="ps" value="Sucessor(a)"><label for="ps">Sucessor(a) ou familiar entrando na gestão</label>
+        <input type="radio" name="08. Papel" id="pl1" value="Líder/gestor"><label for="pl1">Líder/gestor — não sou da família, lidero dentro da empresa</label>
+      </div>
+    </div>
+    <div class="step" data-condition="nao-familiar">
+      <div class="block-eyebrow">Bloco 00 · Quem é você</div>
+      <div class="step-question">Qual é o seu papel na empresa hoje?</div>
+      <div class="options">
+        <input type="radio" name="08. Papel" id="pe" value="Empreendedor(a)" required><label for="pe">Empreendedor(a) — sou dono(a) do negócio</label>
+        <input type="radio" name="08. Papel" id="pl2" value="Líder/gestor"><label for="pl2">Líder/gestor — não sou dono(a), lidero dentro da empresa</label>
+      </div>
+    </div>
+
+    <!-- ============ BLOCO 01 · DÍVIDAS ============ -->
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">A empresa tem dívidas relevantes hoje?</div>
+      <div class="yn-wrap">
+        <input type="radio" name="09. Tem dívidas" id="div-s" value="Sim" required><label for="div-s">Sim</label>
+        <input type="radio" name="09. Tem dívidas" id="div-n" value="Não"><label for="div-n">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-sim">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">Quais tipos de dívida?</div>
+      <div class="step-hint">Pode marcar mais de uma.</div>
+      <div class="checks">
+        <input type="checkbox" name="10a. Tipo de dívida — Bancária" id="td-1" value="Sim"><label for="td-1">Bancária</label>
+        <input type="checkbox" name="10b. Tipo de dívida — Fornecedores" id="td-2" value="Sim"><label for="td-2">Fornecedores</label>
+        <input type="checkbox" name="10c. Tipo de dívida — Impostos ou tributária" id="td-3" value="Sim"><label for="td-3">Impostos / tributária</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-sim">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">Qual o valor total aproximado da dívida?</div>
+      <div class="options">
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-1" value="Até R$100 mil"><label for="val-1">Até R$100 mil</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-2" value="R$100 mil a R$500 mil"><label for="val-2">R$100 mil a R$500 mil</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-3" value="R$500 mil a R$1 milhão"><label for="val-3">R$500 mil a R$1 milhão</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-4" value="R$1 a R$5 milhões"><label for="val-4">R$1 a R$5 milhões</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-5" value="R$5 a R$20 milhões"><label for="val-5">R$5 a R$20 milhões</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-6" value="Acima de R$20 milhões"><label for="val-6">Acima de R$20 milhões</label>
+        <input type="radio" name="11. Valor total aproximado da dívida" id="val-7" value="Não sei precisar"><label for="val-7">Não sei precisar</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-sim">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">O que mais causou o acúmulo dessa dívida?</div>
+      <div class="step-hint">Pode marcar mais de uma.</div>
+      <div class="checks">
+        <input type="checkbox" name="12a. Causa da dívida — Queda de faturamento" id="ca-1" value="Sim"><label for="ca-1">Queda de faturamento / crise de caixa</label>
+        <input type="checkbox" name="12b. Causa da dívida — Crescimento sem estrutura" id="ca-2" value="Sim"><label for="ca-2">Crescimento sem estrutura financeira</label>
+        <input type="checkbox" name="12c. Causa da dívida — Erro de gestão" id="ca-3" value="Sim"><label for="ca-3">Erro de gestão em uma fase anterior</label>
+        <input type="checkbox" name="12d. Causa da dívida — Herança de gestão anterior" id="ca-4" value="Sim"><label for="ca-4">Herdei essa dívida de uma gestão anterior</label>
+        <input type="checkbox" name="12e. Causa da dívida — Crise de setor" id="ca-5" value="Sim"><label for="ca-5">Crise no setor ou no mercado</label>
+        <input type="checkbox" name="12f. Causa da dívida — Priorizou operação" id="ca-6" value="Sim"><label for="ca-6">Priorizei manter a operação girando em vez de pagar</label>
+        <input type="checkbox" name="12g. Causa da dívida — Outro" id="ca-7" value="Sim"><label for="ca-7">Outro motivo</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-sim">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">Qual a situação de recuperação judicial?</div>
+      <div class="options">
+        <input type="radio" name="13. Situação de recuperação judicial" id="rj-1" value="Já está em recuperação judicial"><label for="rj-1">Já está em recuperação judicial</label>
+        <input type="radio" name="13. Situação de recuperação judicial" id="rj-2" value="Estou avaliando entrar"><label for="rj-2">Estou avaliando entrar</label>
+        <input type="radio" name="13. Situação de recuperação judicial" id="rj-3" value="Não"><label for="rj-3">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-sim">
+      <div class="block-eyebrow">Bloco 01 · Dívidas</div>
+      <div class="step-question">O que mais preocupa em relação a essa dívida?</div>
+      <div class="step-hint">Pode marcar mais de uma.</div>
+      <div class="checks">
+        <input type="checkbox" name="14a. Preocupação — Bloqueio de conta ou penhora" id="pr-1" value="Sim"><label for="pr-1">Bloqueio de conta ou penhora</label>
+        <input type="checkbox" name="14b. Preocupação — Impossibilidade de licitar" id="pr-2" value="Sim"><label for="pr-2">Impossibilidade de participar de licitações</label>
+        <input type="checkbox" name="14c. Preocupação — Protesto ou negativação" id="pr-3" value="Sim"><label for="pr-3">Protesto ou negativação do nome da empresa</label>
+        <input type="checkbox" name="14d. Preocupação — Patrimônio pessoal em risco" id="pr-4" value="Sim"><label for="pr-4">Patrimônio pessoal dos sócios em risco</label>
+        <input type="checkbox" name="14e. Preocupação — Dificuldade de crédito" id="pr-5" value="Sim"><label for="pr-5">Dificuldade de conseguir crédito ou financiamento</label>
+        <input type="checkbox" name="14f. Preocupação — Pressão de sócios ou família" id="pr-6" value="Sim"><label for="pr-6">Pressão dos sócios ou da família</label>
+        <input type="checkbox" name="14g. Preocupação — Outro" id="pr-7" value="Sim"><label for="pr-7">Outro</label>
+      </div>
+    </div>
+
+    <!-- SUB-BLOCO — só se marcou "Impostos ou tributária" -->
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Qual o regime tributário da empresa?</div>
+      <div class="options">
+        <input type="radio" name="15. Regime tributário" id="reg-1" value="Simples Nacional"><label for="reg-1">Simples Nacional</label>
+        <input type="radio" name="15. Regime tributário" id="reg-2" value="Lucro Presumido"><label for="reg-2">Lucro Presumido</label>
+        <input type="radio" name="15. Regime tributário" id="reg-3" value="Lucro Real"><label for="reg-3">Lucro Real</label>
+        <input type="radio" name="15. Regime tributário" id="reg-4" value="MEI"><label for="reg-4">MEI</label>
+        <input type="radio" name="15. Regime tributário" id="reg-5" value="Não sei dizer"><label for="reg-5">Não sei dizer</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Em quais esferas está a dívida tributária?</div>
+      <div class="step-hint">Pode marcar mais de uma.</div>
+      <div class="checks">
+        <input type="checkbox" name="16a. Esfera da dívida — Federal" id="esf-1" value="Sim"><label for="esf-1">Federal (Receita Federal / PGFN)</label>
+        <input type="checkbox" name="16b. Esfera da dívida — Estadual" id="esf-2" value="Sim"><label for="esf-2">Estadual (ICMS)</label>
+        <input type="checkbox" name="16c. Esfera da dívida — Municipal" id="esf-3" value="Sim"><label for="esf-3">Municipal (ISS / IPTU)</label>
+        <input type="checkbox" name="16d. Esfera da dívida — Previdenciária" id="esf-4" value="Sim"><label for="esf-4">Previdenciária (INSS / FGTS)</label>
+        <input type="checkbox" name="16e. Esfera da dívida — Não sei ao certo" id="esf-5" value="Sim"><label for="esf-5">Não sei ao certo</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">A empresa está inscrita em Dívida Ativa?</div>
+      <div class="options">
+        <input type="radio" name="17. Inscrita em Dívida Ativa" id="ida-1" value="Sim"><label for="ida-1">Sim</label>
+        <input type="radio" name="17. Inscrita em Dívida Ativa" id="ida-2" value="Não"><label for="ida-2">Não</label>
+        <input type="radio" name="17. Inscrita em Dívida Ativa" id="ida-3" value="Não sei"><label for="ida-3">Não sei</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Tem algum parcelamento ativo hoje?</div>
+      <div class="yn-wrap">
+        <input type="radio" name="18. Parcelamento ativo hoje" id="parc-s" value="Sim"><label for="parc-s">Sim</label>
+        <input type="radio" name="18. Parcelamento ativo hoje" id="parc-n" value="Não"><label for="parc-n">Não</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Qual parcelamento? (se houver)</div>
+      <input type="text" name="19. Qual parcelamento" placeholder="Ex: REFIS, parcelamento ordinário PGFN... (deixe em branco se não tiver)">
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Já tentou fazer uma transação tributária antes?</div>
+      <div class="options">
+        <input type="radio" name="20. Já tentou transação tributária antes" id="tt-1" value="Sim"><label for="tt-1">Sim</label>
+        <input type="radio" name="20. Já tentou transação tributária antes" id="tt-2" value="Não"><label for="tt-2">Não</label>
+        <input type="radio" name="20. Já tentou transação tributária antes" id="tt-3" value="Não sei"><label for="tt-3">Não sei</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Há quanto tempo essa dívida vem se acumulando?</div>
+      <div class="options">
+        <input type="radio" name="21. Tempo de acúmulo da dívida" id="tac-1" value="Menos de 1 ano"><label for="tac-1">Menos de 1 ano</label>
+        <input type="radio" name="21. Tempo de acúmulo da dívida" id="tac-2" value="1 a 3 anos"><label for="tac-2">1 a 3 anos</label>
+        <input type="radio" name="21. Tempo de acúmulo da dívida" id="tac-3" value="3 a 5 anos"><label for="tac-3">3 a 5 anos</label>
+        <input type="radio" name="21. Tempo de acúmulo da dívida" id="tac-4" value="5 a 10 anos"><label for="tac-4">5 a 10 anos</label>
+        <input type="radio" name="21. Tempo de acúmulo da dívida" id="tac-5" value="Mais de 10 anos"><label for="tac-5">Mais de 10 anos</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="divida-impostos">
+      <div class="block-eyebrow">Bloco 01 · Dívidas — imposto</div>
+      <div class="step-question">Você tem um mapeamento completo dessas dívidas?</div>
+      <div class="options">
+        <input type="radio" name="22. Nível de mapeamento das dívidas" id="map-1" value="Sim, tenho um levantamento completo e organizado"><label for="map-1">Sim, tenho um levantamento completo e organizado</label>
+        <input type="radio" name="22. Nível de mapeamento das dívidas" id="map-2" value="Tenho parte das informações, mas não está completo"><label for="map-2">Tenho parte das informações, mas não está completo</label>
+        <input type="radio" name="22. Nível de mapeamento das dívidas" id="map-3" value="Não, ainda não tenho nada organizado"><label for="map-3">Não, ainda não tenho nada organizado</label>
+      </div>
+    </div>
+
+    <!-- ============ BLOCO 02 · SISTEMA — A ESTRUTURA ============ -->
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Existe separação clara entre família, gestão e propriedade?</div>
+      <div class="step-hint">Responda pelo que existe de fato — não pelo que você gostaria que existisse.</div>
+      <div class="options">
+        <input type="radio" name="23. Separação família-gestão-propriedade" id="s1-0" value="0"><label for="s1-0">Inexistente — não existe nada sobre o tema, tudo depende de pessoas e do momento</label>
+        <input type="radio" name="23. Separação família-gestão-propriedade" id="s1-1" value="1"><label for="s1-1">Informal — existe na prática e na conversa, mas nada escrito ou combinado com clareza</label>
+        <input type="radio" name="23. Separação família-gestão-propriedade" id="s1-2" value="2"><label for="s1-2">Parcialmente estruturado — há regra, mas incompleta ou pouco respeitada</label>
+        <input type="radio" name="23. Separação família-gestão-propriedade" id="s1-3" value="3"><label for="s1-3">Estruturado e aplicado — existe, está escrito, é conhecido e funciona de verdade</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Existem regras para entrada de familiares na empresa?</div>
+      <div class="options">
+        <input type="radio" name="24. Regras de entrada de familiares" id="s2-0" value="0"><label for="s2-0">Inexistente</label>
+        <input type="radio" name="24. Regras de entrada de familiares" id="s2-1" value="1"><label for="s2-1">Informal</label>
+        <input type="radio" name="24. Regras de entrada de familiares" id="s2-2" value="2"><label for="s2-2">Parcialmente estruturado</label>
+        <input type="radio" name="24. Regras de entrada de familiares" id="s2-3" value="3"><label for="s2-3">Estruturado e aplicado</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Existe um plano de sucessão de liderança?</div>
+      <div class="options">
+        <input type="radio" name="25. Plano de sucessão de liderança" id="s3-0" value="0"><label for="s3-0">Inexistente</label>
+        <input type="radio" name="25. Plano de sucessão de liderança" id="s3-1" value="1"><label for="s3-1">Informal</label>
+        <input type="radio" name="25. Plano de sucessão de liderança" id="s3-2" value="2"><label for="s3-2">Parcialmente estruturado</label>
+        <input type="radio" name="25. Plano de sucessão de liderança" id="s3-3" value="3"><label for="s3-3">Estruturado e aplicado</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Existe um processo claro de tomada de decisão?</div>
+      <div class="options">
+        <input type="radio" name="26. Processo claro de decisão" id="s4-0" value="0" required><label for="s4-0">Inexistente</label>
+        <input type="radio" name="26. Processo claro de decisão" id="s4-1" value="1"><label for="s4-1">Informal</label>
+        <input type="radio" name="26. Processo claro de decisão" id="s4-2" value="2"><label for="s4-2">Parcialmente estruturado</label>
+        <input type="radio" name="26. Processo claro de decisão" id="s4-3" value="3"><label for="s4-3">Estruturado e aplicado</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Existe protocolo familiar ou regras escritas de convivência?</div>
+      <div class="options">
+        <input type="radio" name="27. Protocolo familiar" id="s5-0" value="0"><label for="s5-0">Inexistente</label>
+        <input type="radio" name="27. Protocolo familiar" id="s5-1" value="1"><label for="s5-1">Informal</label>
+        <input type="radio" name="27. Protocolo familiar" id="s5-2" value="2"><label for="s5-2">Parcialmente estruturado</label>
+        <input type="radio" name="27. Protocolo familiar" id="s5-3" value="3"><label for="s5-3">Estruturado e aplicado</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="familiar">
+      <div class="block-eyebrow">Bloco 02 · Sistema — a estrutura</div>
+      <div class="step-question">Qual dos três caminhos descreve a sucessão na sua empresa?</div>
+      <div class="options">
+        <input type="radio" name="28. Caminho de sucessão" id="cam-1" value="Planejada e estruturada"><label for="cam-1">Planejada e estruturada — o momento e a preparação já foram conduzidos em etapas</label>
+        <input type="radio" name="28. Caminho de sucessão" id="cam-2" value="Planejada sem estrutura"><label for="cam-2">Planejada sem estrutura — a intenção existe, mas não existe processo</label>
+        <input type="radio" name="28. Caminho de sucessão" id="cam-3" value="Forçada"><label for="cam-3">Forçada — por circunstância (saúde, crise) ou por um sucessor que não escolheu</label>
+      </div>
+    </div>
+
+    <!-- ============ BLOCO 03 · INDIVÍDUO — A FORÇA EMOCIONAL ============ -->
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Tomo decisões sem precisar de aprovação.</div>
+      <div class="scale">
+        <input type="radio" name="29. Decide sem aprovação" id="i1-1" value="1" required><label for="i1-1"><span class="scale-num">1</span> Nunca</label>
+        <input type="radio" name="29. Decide sem aprovação" id="i1-2" value="2"><label for="i1-2"><span class="scale-num">2</span> Raramente</label>
+        <input type="radio" name="29. Decide sem aprovação" id="i1-3" value="3"><label for="i1-3"><span class="scale-num">3</span> Às vezes</label>
+        <input type="radio" name="29. Decide sem aprovação" id="i1-4" value="4"><label for="i1-4"><span class="scale-num">4</span> Frequentemente</label>
+        <input type="radio" name="29. Decide sem aprovação" id="i1-5" value="5"><label for="i1-5"><span class="scale-num">5</span> Sempre</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Sustento minha posição quando discordam de mim.</div>
+      <div class="scale">
+        <input type="radio" name="30. Sustenta posição" id="i2-1" value="1"><label for="i2-1"><span class="scale-num">1</span> Nunca</label>
+        <input type="radio" name="30. Sustenta posição" id="i2-2" value="2"><label for="i2-2"><span class="scale-num">2</span> Raramente</label>
+        <input type="radio" name="30. Sustenta posição" id="i2-3" value="3"><label for="i2-3"><span class="scale-num">3</span> Às vezes</label>
+        <input type="radio" name="30. Sustenta posição" id="i2-4" value="4"><label for="i2-4"><span class="scale-num">4</span> Frequentemente</label>
+        <input type="radio" name="30. Sustenta posição" id="i2-5" value="5"><label for="i2-5"><span class="scale-num">5</span> Sempre</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Recebo críticas sem me defender automaticamente.</div>
+      <div class="scale">
+        <input type="radio" name="31. Recebe críticas" id="i3-1" value="1"><label for="i3-1"><span class="scale-num">1</span> Nunca</label>
+        <input type="radio" name="31. Recebe críticas" id="i3-2" value="2"><label for="i3-2"><span class="scale-num">2</span> Raramente</label>
+        <input type="radio" name="31. Recebe críticas" id="i3-3" value="3"><label for="i3-3"><span class="scale-num">3</span> Às vezes</label>
+        <input type="radio" name="31. Recebe críticas" id="i3-4" value="4"><label for="i3-4"><span class="scale-num">4</span> Frequentemente</label>
+        <input type="radio" name="31. Recebe críticas" id="i3-5" value="5"><label for="i3-5"><span class="scale-num">5</span> Sempre</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Estabeleço limites sem sentir que estou sendo injusto(a).</div>
+      <div class="scale">
+        <input type="radio" name="32. Estabelece limites" id="i4-1" value="1"><label for="i4-1"><span class="scale-num">1</span> Nunca</label>
+        <input type="radio" name="32. Estabelece limites" id="i4-2" value="2"><label for="i4-2"><span class="scale-num">2</span> Raramente</label>
+        <input type="radio" name="32. Estabelece limites" id="i4-3" value="3"><label for="i4-3"><span class="scale-num">3</span> Às vezes</label>
+        <input type="radio" name="32. Estabelece limites" id="i4-4" value="4"><label for="i4-4"><span class="scale-num">4</span> Frequentemente</label>
+        <input type="radio" name="32. Estabelece limites" id="i4-5" value="5"><label for="i4-5"><span class="scale-num">5</span> Sempre</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Falo em nome da empresa com convicção própria.</div>
+      <div class="scale">
+        <input type="radio" name="33. Fala com convicção própria" id="i5-1" value="1"><label for="i5-1"><span class="scale-num">1</span> Nunca</label>
+        <input type="radio" name="33. Fala com convicção própria" id="i5-2" value="2"><label for="i5-2"><span class="scale-num">2</span> Raramente</label>
+        <input type="radio" name="33. Fala com convicção própria" id="i5-3" value="3"><label for="i5-3"><span class="scale-num">3</span> Às vezes</label>
+        <input type="radio" name="33. Fala com convicção própria" id="i5-4" value="4"><label for="i5-4"><span class="scale-num">4</span> Frequentemente</label>
+        <input type="radio" name="33. Fala com convicção própria" id="i5-5" value="5"><label for="i5-5"><span class="scale-num">5</span> Sempre</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 03 · Indivíduo — a força emocional</div>
+      <div class="step-question">Diante de uma discordância importante numa reunião, sua reação mais frequente é:</div>
+      <div class="options">
+        <input type="radio" name="34. Reação à discordância" id="rea-1" value="Evito o assunto" required><label for="rea-1">Evito o assunto</label>
+        <input type="radio" name="34. Reação à discordância" id="rea-2" value="Defendo minha posição até o fim"><label for="rea-2">Defendo minha posição até o fim</label>
+        <input type="radio" name="34. Reação à discordância" id="rea-3" value="A discussão esquenta"><label for="rea-3">A discussão esquenta</label>
+        <input type="radio" name="34. Reação à discordância" id="rea-4" value="Eu me retraio e a decisão paralisa"><label for="rea-4">Eu me retraio e a decisão paralisa</label>
+      </div>
+    </div>
+
+    <!-- ============ BLOCO 04 · AÇÃO — A CORAGEM DE DECIDIR ============ -->
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">Decisões de mudança não dependem exclusivamente de uma única pessoa.</div>
+      <div class="scale">
+        <input type="radio" name="35. Mudança não depende só de uma pessoa" id="a1-1" value="1" required><label for="a1-1"><span class="scale-num">1</span> Não acontece</label>
+        <input type="radio" name="35. Mudança não depende só de uma pessoa" id="a1-2" value="2"><label for="a1-2"><span class="scale-num">2</span></label>
+        <input type="radio" name="35. Mudança não depende só de uma pessoa" id="a1-3" value="3"><label for="a1-3"><span class="scale-num">3</span></label>
+        <input type="radio" name="35. Mudança não depende só de uma pessoa" id="a1-4" value="4"><label for="a1-4"><span class="scale-num">4</span></label>
+        <input type="radio" name="35. Mudança não depende só de uma pessoa" id="a1-5" value="5"><label for="a1-5"><span class="scale-num">5</span> Acontece de forma consistente</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">As ideias de quem está começando têm espaço real para ser testadas.</div>
+      <div class="scale">
+        <input type="radio" name="36. Espaço para ideias novas" id="a2-1" value="1"><label for="a2-1"><span class="scale-num">1</span> Não acontece</label>
+        <input type="radio" name="36. Espaço para ideias novas" id="a2-2" value="2"><label for="a2-2"><span class="scale-num">2</span></label>
+        <input type="radio" name="36. Espaço para ideias novas" id="a2-3" value="3"><label for="a2-3"><span class="scale-num">3</span></label>
+        <input type="radio" name="36. Espaço para ideias novas" id="a2-4" value="4"><label for="a2-4"><span class="scale-num">4</span></label>
+        <input type="radio" name="36. Espaço para ideias novas" id="a2-5" value="5"><label for="a2-5"><span class="scale-num">5</span> Acontece de forma consistente</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">As decisões são tomadas com critérios claros e transparentes.</div>
+      <div class="scale">
+        <input type="radio" name="37. Critérios claros e transparentes" id="a3-1" value="1"><label for="a3-1"><span class="scale-num">1</span> Não acontece</label>
+        <input type="radio" name="37. Critérios claros e transparentes" id="a3-2" value="2"><label for="a3-2"><span class="scale-num">2</span></label>
+        <input type="radio" name="37. Critérios claros e transparentes" id="a3-3" value="3"><label for="a3-3"><span class="scale-num">3</span></label>
+        <input type="radio" name="37. Critérios claros e transparentes" id="a3-4" value="4"><label for="a3-4"><span class="scale-num">4</span></label>
+        <input type="radio" name="37. Critérios claros e transparentes" id="a3-5" value="5"><label for="a3-5"><span class="scale-num">5</span> Acontece de forma consistente</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">O propósito da empresa é claro e conhecido por todos os colaboradores.</div>
+      <div class="scale">
+        <input type="radio" name="38. Propósito claro e conhecido" id="a4-1" value="1"><label for="a4-1"><span class="scale-num">1</span> Não acontece</label>
+        <input type="radio" name="38. Propósito claro e conhecido" id="a4-2" value="2"><label for="a4-2"><span class="scale-num">2</span></label>
+        <input type="radio" name="38. Propósito claro e conhecido" id="a4-3" value="3"><label for="a4-3"><span class="scale-num">3</span></label>
+        <input type="radio" name="38. Propósito claro e conhecido" id="a4-4" value="4"><label for="a4-4"><span class="scale-num">4</span></label>
+        <input type="radio" name="38. Propósito claro e conhecido" id="a4-5" value="5"><label for="a4-5"><span class="scale-num">5</span> Acontece de forma consistente</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">Consigo explicar em uma frase por que essa empresa deve continuar existindo nas próximas décadas.</div>
+      <div class="scale">
+        <input type="radio" name="39. Explica o porquê da empresa existir" id="a5-1" value="1"><label for="a5-1"><span class="scale-num">1</span> Não consigo</label>
+        <input type="radio" name="39. Explica o porquê da empresa existir" id="a5-2" value="2"><label for="a5-2"><span class="scale-num">2</span></label>
+        <input type="radio" name="39. Explica o porquê da empresa existir" id="a5-3" value="3"><label for="a5-3"><span class="scale-num">3</span></label>
+        <input type="radio" name="39. Explica o porquê da empresa existir" id="a5-4" value="4"><label for="a5-4"><span class="scale-num">4</span></label>
+        <input type="radio" name="39. Explica o porquê da empresa existir" id="a5-5" value="5"><label for="a5-5"><span class="scale-num">5</span> Consigo com clareza</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Bloco 04 · Ação — a coragem de decidir</div>
+      <div class="step-question">Qual força mais ameaça a empresa hoje?</div>
+      <div class="options">
+        <input type="radio" name="40. Força que mais ameaça" id="for-1" value="Conflito não resolvido entre sócios" required><label for="for-1">Conflito não resolvido entre sócios</label>
+        <input type="radio" name="40. Força que mais ameaça" id="for-2" value="Falta de inovação — sempre foi assim"><label for="for-2">Falta de inovação — "sempre foi feito assim"</label>
+        <input type="radio" name="40. Força que mais ameaça" id="for-3" value="Desconexão com o propósito"><label for="for-3">Desconexão com o propósito — ninguém sabe mais por que existimos</label>
+      </div>
+    </div>
+
+    <!-- ============ FECHAMENTO ============ -->
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Antes de fechar</div>
+      <div class="step-question">O que fez você buscar esse diagnóstico agora, especificamente?</div>
+      <textarea name="41. O que fez buscar isso agora" placeholder="Conte com suas palavras — o que mudou, o que apertou, o que te trouxe até aqui." required></textarea>
+    </div>
+
+    <div class="step" data-condition="all">
+      <div class="block-eyebrow">Fechamento</div>
+      <div class="step-question">Como prefere ser contatado(a) depois do resultado?</div>
+      <div class="options">
+        <input type="radio" name="42. Contato preferido" id="c28-1" value="WhatsApp" required><label for="c28-1">WhatsApp</label>
+        <input type="radio" name="42. Contato preferido" id="c28-2" value="E-mail"><label for="c28-2">E-mail</label>
+      </div>
+    </div>
+
+    <div class="step" data-condition="all" id="termStep">
+      <div class="block-eyebrow">Fechamento</div>
+      <div class="step-question">Termo de autorização</div>
+      <div class="term-box" id="termBox" tabindex="0">
+        <h4>Termo de Autorização de Uso de Dados</h4>
+        <p>Ao preencher este diagnóstico, você fornece informações sobre você e sobre a empresa citada, incluindo dados cadastrais, financeiros e, quando aplicável, relacionados a dívidas.</p>
+        <p><strong>Finalidade.</strong> Esses dados serão utilizados exclusivamente para: (i) calcular o resultado do seu diagnóstico; (ii) a Bárbara Quercetti e sua equipe entrarem em contato para conversar sobre o resultado, caso você tenha interesse; (iii) quando aplicável e do seu interesse, apresentar e conectar você a parceiros especializados aptos a ajudar na situação relatada.</p>
+        <p><strong>Compartilhamento com parceiros.</strong> Quando aplicável, você autoriza que as informações fornecidas neste formulário sejam compartilhadas com parceiros indicados pela Tríade do Legado, estritamente para fins de avaliação técnica e elaboração de proposta relacionada à situação relatada. Nenhum dado será vendido, cedido para fins de marketing de terceiros não relacionados, ou usado para finalidade diversa da aqui descrita.</p>
+        <p><strong>Base legal.</strong> Este tratamento observa a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD), tendo como base o seu consentimento livre, informado e inequívoco.</p>
+        <p><strong>Seus direitos.</strong> Você pode, a qualquer momento, solicitar a confirmação, o acesso, a correção ou a eliminação dos seus dados, bem como revogar este consentimento, bastando entrar em contato pelo e-mail ou WhatsApp informados neste formulário.</p>
+        <p>Ao marcar a caixa de aceite abaixo, você declara ter lido e compreendido este termo, e concorda com o uso dos seus dados conforme aqui descrito.</p>
+      </div>
+      <p class="term-hint" id="termHint">Role o texto acima até o final para habilitar o aceite.</p>
+      <label class="consent-check is-disabled" id="consentLabel">
+        <input type="checkbox" name="43. Aceite do Termo de Autorização" id="lgpd" value="Sim, li e aceito o Termo de Autorização" disabled>
+        <span>Li e concordo com o Termo de Autorização de Uso de Dados acima.</span>
+      </label>
+    </div>
+
+  </form>
+
+  <!-- NAVIGATION -->
+  <div class="nav" id="navBar" style="display:none">
+    <div class="nav-inner">
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Voltar</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()">Próxima →</button>
+    </div>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+  let current = 0;
+  let steps = [];
+
+  // Lista fixa de TODOS os campos que a planilha central espera, sempre
+  // nesta ordem — mesmo os que não se aplicam ao ramo respondido (aí vão
+  // em branco). É isso que garante que a aba nunca desalinha: a primeira
+  // resposta já cria todas as colunas de uma vez.
+  var ALL_FIELDS = [
+    '00. Empresa familiar', '01. Nome completo', '02. Nome da empresa', '03. E-mail',
+    '04. WhatsApp', '05. CNPJ', '06. Setor de atuação', '07. Faturamento anual aproximado',
+    '08. Papel', '09. Tem dívidas',
+    '10a. Tipo de dívida — Bancária', '10b. Tipo de dívida — Fornecedores', '10c. Tipo de dívida — Impostos ou tributária',
+    '11. Valor total aproximado da dívida',
+    '12a. Causa da dívida — Queda de faturamento', '12b. Causa da dívida — Crescimento sem estrutura',
+    '12c. Causa da dívida — Erro de gestão', '12d. Causa da dívida — Herança de gestão anterior',
+    '12e. Causa da dívida — Crise de setor', '12f. Causa da dívida — Priorizou operação', '12g. Causa da dívida — Outro',
+    '13. Situação de recuperação judicial',
+    '14a. Preocupação — Bloqueio de conta ou penhora', '14b. Preocupação — Impossibilidade de licitar',
+    '14c. Preocupação — Protesto ou negativação', '14d. Preocupação — Patrimônio pessoal em risco',
+    '14e. Preocupação — Dificuldade de crédito', '14f. Preocupação — Pressão de sócios ou família', '14g. Preocupação — Outro',
+    '15. Regime tributário',
+    '16a. Esfera da dívida — Federal', '16b. Esfera da dívida — Estadual', '16c. Esfera da dívida — Municipal',
+    '16d. Esfera da dívida — Previdenciária', '16e. Esfera da dívida — Não sei ao certo',
+    '17. Inscrita em Dívida Ativa', '18. Parcelamento ativo hoje', '19. Qual parcelamento',
+    '20. Já tentou transação tributária antes', '21. Tempo de acúmulo da dívida', '22. Nível de mapeamento das dívidas',
+    '23. Separação família-gestão-propriedade', '24. Regras de entrada de familiares', '25. Plano de sucessão de liderança',
+    '26. Processo claro de decisão', '27. Protocolo familiar', '28. Caminho de sucessão',
+    '29. Decide sem aprovação', '30. Sustenta posição', '31. Recebe críticas', '32. Estabelece limites',
+    '33. Fala com convicção própria', '34. Reação à discordância',
+    '35. Mudança não depende só de uma pessoa', '36. Espaço para ideias novas', '37. Critérios claros e transparentes',
+    '38. Propósito claro e conhecido', '39. Explica o porquê da empresa existir', '40. Força que mais ameaça',
+    '41. O que fez buscar isso agora', '42. Contato preferido', '43. Aceite do Termo de Autorização'
+  ];
+
+  function getVal(name) {
+    var el = document.querySelector('input[name="' + CSS.escape(name) + '"]:checked, textarea[name="' + CSS.escape(name) + '"], input[type="text"][name="' + CSS.escape(name) + '"], input[type="email"][name="' + CSS.escape(name) + '"], input[type="tel"][name="' + CSS.escape(name) + '"]');
+    if (!el) return '';
+    if (el.type === 'radio') return el.checked ? el.value : '';
+    return el.value || '';
+  }
+  function isChecked(name) {
+    var el = document.querySelector('input[name="' + CSS.escape(name) + '"]');
+    return !!(el && el.checked);
+  }
+  function scoreVal(name) {
+    var el = document.querySelector('input[name="' + CSS.escape(name) + '"]:checked');
+    if (!el) return 0;
+    return parseInt(el.value, 10) || 0;
+  }
+
+  function isVisible(step) {
+    var cond = step.dataset.condition;
+    if (cond === 'all') return true;
+    var familiar = getVal('00. Empresa familiar');
+    if (cond === 'familiar') return familiar === 'Sim';
+    if (cond === 'nao-familiar') return familiar === 'Não';
+    if (cond === 'divida-sim') return getVal('09. Tem dívidas') === 'Sim';
+    if (cond === 'divida-impostos') return getVal('09. Tem dívidas') === 'Sim' && isChecked('10c. Tipo de dívida — Impostos ou tributária');
+    return true;
+  }
+
+  function visibleSteps() { return steps.filter(isVisible); }
+
+  function updateProgress() {
+    const vis = visibleSteps();
+    const idx = vis.indexOf(steps[current]);
+    const total = vis.length;
+    const pct = ((idx + 1) / total) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('stepCounter').textContent = (idx + 1) + ' de ' + total;
+    document.getElementById('btnBack').disabled = idx === 0;
+    const isLast = idx === total - 1;
+    const btn = document.getElementById('btnNext');
+    btn.textContent = isLast ? 'Enviar diagnóstico' : 'Próxima →';
+    btn.className   = isLast ? 'btn-next submit-btn' : 'btn-next';
+  }
+
+  function showStep(index) {
+    steps.forEach(s => s.classList.remove('active'));
+    steps[index].classList.add('active');
+    current = index;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (steps[index].id === 'termStep') requestAnimationFrame(checkTermScroll);
+  }
+
+  function currentStepValid() {
+    const step = steps[current];
+    const requiredEls = step.querySelectorAll('[required]');
+    for (const el of requiredEls) {
+      if (el.type === 'radio') {
+        const checked = step.querySelector('input[name="' + CSS.escape(el.name) + '"]:checked');
+        if (!checked) { el.reportValidity(); return false; }
+      } else if (el.type === 'checkbox') {
+        if (!el.checked) { el.reportValidity(); return false; }
+      } else if (!el.value || !el.value.trim()) {
+        el.reportValidity();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function goNext() {
+    const vis = visibleSteps();
+    const idx = vis.indexOf(steps[current]);
+    const isLast = idx === vis.length - 1;
+
+    if (steps[current].id !== 'termStep' && !currentStepValid()) return;
+
+    if (steps[current].id === 'termStep') {
+      const lgpd = document.getElementById('lgpd');
+      if (!lgpd.checked) {
+        if (lgpd.disabled) {
+          document.getElementById('termBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const hint = document.getElementById('termHint');
+          hint.textContent = 'Leia o termo até o final antes de aceitar.';
+          hint.style.color = 'var(--burgundy)';
+        } else {
+          lgpd.focus();
+        }
+        return;
+      }
+    }
+
+    if (isLast) {
+      const form = document.getElementById('diagForm');
+
+      // Monta o payload com TODAS as colunas fixas (em branco quando não
+      // se aplica) e manda pro Apps Script — isso é o que mantém a aba
+      // única sempre alinhada, ramo com ramo.
+      try {
+        var sheetData = new FormData();
+        ALL_FIELDS.forEach(function (f) { sheetData.append(f, getVal(f) || ''); });
+        sheetData.append('_form', 'diagnostico');
+        fetch('https://script.google.com/macros/s/AKfycbyJV0lGXj5WgRXA1mGGaSUaVrLVdXHaD4OlIh_6LV4nRSKrSpbn1fOBXxHTKVxHH7OYrg/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          keepalive: true,
+          body: sheetData
+        });
+      } catch (err) {}
+
+      var familiar = getVal('00. Empresa familiar');
+      var hasDivida = getVal('09. Tem dívidas');
+      var res = computeResultado(familiar === 'Sim');
+      var crit = hasDivida === 'Sim' ? computeCriticidade() : null;
+
+      var empresaEl = form.querySelector('input[name="02. Nome da empresa"]');
+      var nomeEl = form.querySelector('input[name="01. Nome completo"]');
+      var nextInput = form.querySelector('input[name="_next"]');
+      var qp = new URLSearchParams();
+      qp.set('familiar', familiar);
+      qp.set('nivel', res.nivel);
+      qp.set('sistema', res.sistemaPct);
+      qp.set('sistemaItens', res.sistemaItens);
+      qp.set('individuo', res.individuoPct);
+      qp.set('acao', res.acaoPct);
+      qp.set('arquetipo', res.arquetipo || '');
+      qp.set('itensFracos', res.itensFracos.join(','));
+      qp.set('hasDivida', hasDivida);
+      if (crit) {
+        qp.set('critNivel', crit.nivel);
+        qp.set('critScore', crit.score);
+        crit.drivers.forEach(function (d, i) { qp.set('m' + (i + 1), d); });
+      }
+      qp.set('empresa', empresaEl ? empresaEl.value : '');
+      qp.set('nome', nomeEl ? nomeEl.value : '');
+      nextInput.value = nextInput.value + '?' + qp.toString();
+
+      form.submit();
+      return;
+    }
+    const next = steps.indexOf(vis[idx + 1]);
+    showStep(next);
+  }
+
+  function goBack() {
+    const vis = visibleSteps();
+    const idx = vis.indexOf(steps[current]);
+    if (idx === 0) return;
+    const prev = steps.indexOf(vis[idx - 1]);
+    showStep(prev);
+  }
+
+  function startForm() {
+    document.getElementById('introCard').style.display = 'none';
+    document.getElementById('diagForm').style.display = 'block';
+    document.getElementById('topBar').style.display = 'block';
+    document.getElementById('navBar').style.display = 'flex';
+    steps = Array.from(document.querySelectorAll('#diagForm .step'));
+    showStep(0);
+  }
+
+  // ── SCORE: Sistema / Indivíduo / Ação ──
+  // Pra empresa familiar, Sistema usa os 5 itens de sempre (0-15).
+  // Pra não-familiar, só "Processo claro de decisão" se aplica — Sistema
+  // vira um indicador de 1 item só (0-3), sinalizado como tal no resultado
+  // em vez de fingir ser o pilar completo.
+  // Código curto de cada item (mesmo prefixo usado nos ids dos radios) —
+  // é isso que vai identificar qual parágrafo de impacto mostrar no
+  // resultado, sem precisar mandar o nome do campo inteiro pela URL.
+  var SISTEMA_CODES_FAMILIAR = [
+    ['23. Separação família-gestão-propriedade', 's1'],
+    ['24. Regras de entrada de familiares', 's2'],
+    ['25. Plano de sucessão de liderança', 's3'],
+    ['26. Processo claro de decisão', 's4'],
+    ['27. Protocolo familiar', 's5']
+  ];
+  var SISTEMA_CODES_NAO_FAMILIAR = [['26. Processo claro de decisão', 's4']];
+  var INDIVIDUO_CODES = [
+    ['29. Decide sem aprovação', 'i1'], ['30. Sustenta posição', 'i2'], ['31. Recebe críticas', 'i3'],
+    ['32. Estabelece limites', 'i4'], ['33. Fala com convicção própria', 'i5']
+  ];
+  var ACAO_CODES = [
+    ['35. Mudança não depende só de uma pessoa', 'a1'], ['36. Espaço para ideias novas', 'a2'],
+    ['37. Critérios claros e transparentes', 'a3'], ['38. Propósito claro e conhecido', 'a4'],
+    ['39. Explica o porquê da empresa existir', 'a5']
+  ];
+
+  // Dos itens do pilar mais fraco, pega os até 2 com nota mais baixa —
+  // são esses que viram parágrafo de impacto na página de resultado.
+  function pickWeak(fieldsCodes) {
+    var scored = fieldsCodes.map(function (fc) { return { code: fc[1], val: scoreVal(fc[0]) }; });
+    scored.sort(function (a, b) { return a.val - b.val; });
+    return scored.slice(0, 2).map(function (s) { return s.code; });
+  }
+
+  function computeResultado(isFamiliar) {
+    var sistemaPct, sistemaItens, sistemaCodes;
+    if (isFamiliar) {
+      sistemaCodes = SISTEMA_CODES_FAMILIAR;
+      var sistemaScore = sistemaCodes.reduce(function (sum, fc) { return sum + scoreVal(fc[0]); }, 0);
+      sistemaPct = Math.round((sistemaScore / 15) * 100);
+      sistemaItens = 5;
+    } else {
+      sistemaCodes = SISTEMA_CODES_NAO_FAMILIAR;
+      sistemaPct = Math.round((scoreVal('26. Processo claro de decisão') / 3) * 100);
+      sistemaItens = 1;
+    }
+
+    var individuoScore = INDIVIDUO_CODES.reduce(function (sum, fc) { return sum + scoreVal(fc[0]); }, 0);
+    var individuoPct = Math.round(((individuoScore - 5) / 20) * 100);
+
+    var acaoScore = ACAO_CODES.reduce(function (sum, fc) { return sum + scoreVal(fc[0]); }, 0);
+    var acaoPct = Math.round(((acaoScore - 5) / 20) * 100);
+
+    var weakestPct = Math.min(sistemaPct, individuoPct, acaoPct);
+    var itensFracos;
+    if (weakestPct === sistemaPct) itensFracos = pickWeak(sistemaCodes);
+    else if (weakestPct === individuoPct) itensFracos = pickWeak(INDIVIDUO_CODES);
+    else itensFracos = pickWeak(ACAO_CODES);
+
+    var geral = isFamiliar ? Math.round((sistemaPct + individuoPct + acaoPct) / 3) : Math.round((individuoPct + acaoPct) / 2);
+    var nivel = 'Vulnerável';
+    if (geral >= 71) nivel = 'Madura';
+    else if (geral >= 41) nivel = 'Em Construção';
+
+    var arquetipo = null;
+    if (isFamiliar) {
+      if (sistemaPct <= 40 && individuoPct <= 40 && acaoPct <= 40) {
+        arquetipo = 'Ponto de Inflexão';
+      } else {
+        var vals = [sistemaPct, individuoPct, acaoPct];
+        var max = Math.max.apply(null, vals);
+        var min = Math.min.apply(null, vals);
+        if (nivel === 'Madura' && (max - min) <= 15) {
+          arquetipo = 'Legado em Movimento';
+        } else if (nivel === 'Em Construção' && (max - min) <= 15) {
+          arquetipo = 'Arquitetura em Consolidação';
+        } else if (min === sistemaPct) {
+          arquetipo = 'Legado em Risco Estrutural';
+        } else if (min === individuoPct) {
+          arquetipo = 'Sucessão Travada pelo Silêncio';
+        } else {
+          arquetipo = 'Potencial Represado';
+        }
+      }
+    }
+
+    return { sistemaPct: sistemaPct, sistemaItens: sistemaItens, individuoPct: individuoPct, acaoPct: acaoPct, nivel: nivel, arquetipo: arquetipo, itensFracos: itensFracos };
+  }
+
+  // ── SCORE: criticidade da dívida (idêntico ao diagnóstico tributário —
+  // cada add() já checa se o campo foi respondido, então funciona igual
+  // pra quem passou pelo sub-bloco de impostos e pra quem não passou) ──
+  function computeCriticidade() {
+    var score = 0;
+    var drivers = [];
+    function add(pts, label) { if (pts > 0) { score += pts; drivers.push({ pts: pts, label: label }); } }
+
+    var rj = getVal('13. Situação de recuperação judicial');
+    if (rj === 'Já está em recuperação judicial') add(4, 'já está em recuperação judicial');
+    else if (rj === 'Estou avaliando entrar') add(2, 'avaliando entrar em recuperação judicial');
+
+    var inscrita = getVal('17. Inscrita em Dívida Ativa');
+    if (inscrita === 'Sim') add(2, 'já inscrita em Dívida Ativa');
+    else if (inscrita === 'Não sei') add(1, 'não sabe se está em Dívida Ativa');
+
+    var valorMap = {
+      'Até R$100 mil': 1, 'R$100 mil a R$500 mil': 2, 'R$500 mil a R$1 milhão': 3,
+      'R$1 a R$5 milhões': 4, 'R$5 a R$20 milhões': 5, 'Acima de R$20 milhões': 6, 'Não sei precisar': 2
+    };
+    var valor = getVal('11. Valor total aproximado da dívida');
+    if (valorMap[valor]) add(valorMap[valor], 'dívida na faixa "' + valor + '"');
+
+    var tempo = getVal('21. Tempo de acúmulo da dívida');
+    if (tempo === 'Mais de 10 anos') add(2, 'dívida acumulada há mais de 10 anos');
+    else if (tempo === '5 a 10 anos') add(1, 'dívida acumulada entre 5 e 10 anos');
+
+    var preocupacoes = [
+      ['14a. Preocupação — Bloqueio de conta ou penhora', 3, 'risco de bloqueio de conta ou penhora'],
+      ['14d. Preocupação — Patrimônio pessoal em risco', 3, 'patrimônio pessoal dos sócios em risco'],
+      ['14b. Preocupação — Impossibilidade de licitar', 2, 'impossibilidade de participar de licitações'],
+      ['14c. Preocupação — Protesto ou negativação', 2, 'risco de protesto ou negativação'],
+      ['14e. Preocupação — Dificuldade de crédito', 1, 'dificuldade de conseguir crédito'],
+      ['14f. Preocupação — Pressão de sócios ou família', 1, 'pressão de sócios ou família']
+    ];
+    preocupacoes.forEach(function (p) { if (isChecked(p[0])) add(p[1], p[2]); });
+
+    var parcelamento = getVal('18. Parcelamento ativo hoje');
+    if (parcelamento === 'Não' && inscrita === 'Sim') add(2, 'sem parcelamento ativo mesmo já inscrita em Dívida Ativa');
+
+    var mapeamento = getVal('22. Nível de mapeamento das dívidas');
+    if (mapeamento === 'Não, ainda não tenho nada organizado') add(1, 'sem levantamento organizado da dívida');
+
+    var nivel = 'Baixa';
+    if (score >= 19) nivel = 'Crítica';
+    else if (score >= 12) nivel = 'Alta';
+    else if (score >= 6) nivel = 'Média';
+
+    drivers.sort(function (a, b) { return b.pts - a.pts; });
+    var topDrivers = drivers.slice(0, 3).map(function (d) { return d.label; });
+
+    return { score: score, nivel: nivel, drivers: topDrivers };
+  }
+
+  function checkTermScroll() {
+    const box = document.getElementById('termBox');
+    const lgpd = document.getElementById('lgpd');
+    if (!box || box.clientHeight === 0 || !lgpd.disabled) return;
+    const reachedEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 8;
+    if (reachedEnd) {
+      lgpd.disabled = false;
+      document.getElementById('consentLabel').classList.remove('is-disabled');
+      const hint = document.getElementById('termHint');
+      hint.textContent = 'Pode marcar o aceite abaixo.';
+      hint.style.color = 'var(--gold)';
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    const box = document.getElementById('termBox');
+    if (box) box.addEventListener('scroll', checkTermScroll);
+  });
+
+  // Auto-advance em pergunta de escolha única
+  document.addEventListener('change', function(e) {
+    if (!e.target.matches('input[type="radio"]')) return;
+    const stepEl = e.target.closest('.step');
+    if (stepEl && stepEl.classList.contains('active')) {
+      const hasTextarea = stepEl.querySelector('textarea, input[type="text"], input[type="email"], input[type="tel"]');
+      if (!hasTextarea) setTimeout(goNext, 320);
+    }
+  });
+
+  // Enter avança perguntas de texto
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      const active = document.querySelector('.step.active');
+      if (!active) return;
+      const focused = document.activeElement;
+      if (focused && focused.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+      goNext();
+    }
+  });
+</script>
+</body>
+</html>
