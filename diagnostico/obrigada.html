@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seu diagnóstico — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #111E29; --gold: #BC9B5F; --burgundy: #571C25;
+      --white: #FFFFFF; --muted: rgba(255,255,255,.7);
+    }
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--navy); color: var(--white);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 56px 24px;
+    }
+    .wrap { max-width: 600px; text-align: center; }
+    .gold-line { width: 48px; height: 2px; background: var(--gold); margin: 0 auto 28px; }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+    .heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 5vw, 34px); font-weight: 600; line-height: 1.2; margin-bottom: 10px; }
+    .arquetipo-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 6vw, 42px); font-weight: 700; color: var(--gold); line-height: 1.15; margin-bottom: 24px; }
+    .body-text { font-size: 15.5px; color: var(--muted); line-height: 1.85; margin-bottom: 32px; text-align: left; }
+
+    .nivel-badge {
+      display: inline-block; font-family: 'Montserrat', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: .04em;
+      padding: 7px 18px; border-radius: 999px; margin: 6px 0 20px;
+      border: 1.5px solid var(--gold); color: var(--gold);
+    }
+    .nivel-badge.critica { background: var(--burgundy); border-color: var(--burgundy); color: #fff; }
+    .nivel-badge.alta { background: rgba(87,28,37,.35); }
+
+    .motivos {
+      text-align: left; list-style: none; margin: 0 0 32px; padding: 20px 22px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+    }
+    .motivos li { font-size: 14px; color: rgba(255,255,255,.85); padding-left: 18px; position: relative; margin-bottom: 10px; line-height: 1.6; }
+    .motivos li:last-child { margin-bottom: 0; }
+    .motivos li::before { content: "—"; position: absolute; left: 0; color: var(--gold); }
+
+    .pilares {
+      text-align: left; margin: 0 0 32px; padding: 22px 24px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+    }
+    .pilar-row { margin-bottom: 18px; }
+    .pilar-row:last-child { margin-bottom: 0; }
+    .pilar-label { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.85); margin-bottom: 8px; }
+    .pilar-label span.pct { color: var(--gold); font-weight: 700; }
+    .pilar-note { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 4px; text-transform: none; letter-spacing: 0; }
+    .pilar-track { height: 8px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; }
+    .pilar-fill { height: 100%; background: var(--gold); border-radius: 999px; width: 0%; transition: width .6s ease; }
+    .pilar-frail .pilar-fill { background: var(--burgundy); }
+
+    .cta-row { margin-bottom: 40px; }
+    .btn-cta {
+      display: inline-block; background: var(--gold); color: #24190B;
+      font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 15px 36px; border-radius: 8px; text-decoration: none; letter-spacing: .2px;
+      transition: transform .2s ease;
+    }
+    .btn-cta:hover { transform: translateY(-2px); }
+    .cta-note { font-size: 12.5px; color: rgba(255,255,255,.5); margin-top: 14px; }
+    .mantra { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--gold); line-height: 1.7; }
+    .footer { margin-top: 40px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.3); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="gold-line"></div>
+    <div class="eyebrow">Diagnóstico recebido</div>
+    <h1 class="heading" id="heading">Recebi o seu diagnóstico.</h1>
+    <div class="arquetipo-name" id="arquetipoName" style="display:none"></div>
+    <div class="nivel-badge" id="critBadge" style="display:none"></div>
+    <p class="body-text" id="critText" style="display:none"></p>
+    <ul class="motivos" id="motivosList" style="display:none"></ul>
+    <p class="body-text" id="bodyText"></p>
+
+    <div id="aprofundamento" style="display:none">
+      <div class="eyebrow" style="margin-top:8px; text-align:left">Onde isso mais aparece</div>
+      <div id="aprofundamentoTexts"></div>
+    </div>
+
+    <div class="pilares">
+      <div class="pilar-row" id="rowSistema">
+        <div class="pilar-label"><span id="labelSistema">Sistema — a estrutura</span><span class="pct" id="pctSistema">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillSistema"></div></div>
+        <div class="pilar-note" id="noteSistema" style="display:none">Baseado em 1 critério (processo de decisão) — os demais itens de estrutura só se aplicam a negócio familiar.</div>
+      </div>
+      <div class="pilar-row" id="rowIndividuo">
+        <div class="pilar-label"><span>Indivíduo — a força emocional</span><span class="pct" id="pctIndividuo">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillIndividuo"></div></div>
+      </div>
+      <div class="pilar-row" id="rowAcao">
+        <div class="pilar-label"><span>Ação — a coragem de decidir</span><span class="pct" id="pctAcao">0%</span></div>
+        <div class="pilar-track"><div class="pilar-fill" id="fillAcao"></div></div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a href="#" id="ctaBtn" class="btn-cta" target="_blank" rel="noopener">Falar agora no WhatsApp</a>
+      <p class="cta-note">Você vai pro WhatsApp com uma mensagem já pronta — a equipe responde e leva pra Bárbara quando fizer sentido.</p>
+    </div>
+
+    <p class="mantra">Honre o passado.<br>Faça parte do presente.<br>Construa seu legado para o futuro.</p>
+    <div class="footer">Tríade do Legado · Bárbara Quercetti</div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var nome = params.get('nome') || '';
+    var empresa = params.get('empresa') || 'sua empresa';
+    var familiar = params.get('familiar') || '';
+    var nivel = params.get('nivel') || '';
+    var arquetipo = params.get('arquetipo') || '';
+    var sistema = parseInt(params.get('sistema'), 10); if (isNaN(sistema)) sistema = 0;
+    var sistemaItens = parseInt(params.get('sistemaItens'), 10) || 5;
+    var individuo = parseInt(params.get('individuo'), 10); if (isNaN(individuo)) individuo = 0;
+    var acao = parseInt(params.get('acao'), 10); if (isNaN(acao)) acao = 0;
+    var hasDivida = params.get('hasDivida') || '';
+    var critNivel = params.get('critNivel') || '';
+    var motivos = [params.get('m1'), params.get('m2'), params.get('m3')].filter(Boolean);
+    var itensFracos = (params.get('itensFracos') || '').split(',').filter(Boolean);
+
+    document.getElementById('heading').textContent = nome ? ('Obrigada, ' + nome.split(' ')[0] + '.') : 'Recebi o seu diagnóstico.';
+
+    // ── Bloco de dívida (só aparece se hasDivida === 'Sim') ──
+    if (hasDivida === 'Sim' && critNivel) {
+      var critMsgs = {
+        'Baixa': 'A situação da dívida na ' + empresa + ' ainda está numa zona administrável. Isso não significa que pode esperar — só significa que hoje você tem mais opções na mesa do que vai ter depois.',
+        'Média': 'Existem sinais reais de atenção na dívida da ' + empresa + '. Ainda dá pra agir com estratégia, sem desespero — mas esse é o momento certo pra isso.',
+        'Alta': 'A dívida da ' + empresa + ' está numa zona de risco real. O que você marcou mostra sinais que costumam se agravar rápido quando ficam sem resposta.',
+        'Crítica': 'O que você descreveu sobre a dívida da ' + empresa + ' pede decisão rápida. Eu já estive dentro de uma dívida de R$12 milhões — sei o peso disso. Dá pra sair, mas não dá pra esperar.'
+      };
+      var badge = document.getElementById('critBadge');
+      badge.textContent = 'Grau de criticidade da dívida: ' + critNivel;
+      badge.style.display = 'inline-block';
+      if (critNivel === 'Crítica') badge.classList.add('critica');
+      if (critNivel === 'Alta') badge.classList.add('alta');
+      var ct = document.getElementById('critText');
+      ct.textContent = critMsgs[critNivel] || '';
+      ct.style.display = 'block';
+      if (motivos.length) {
+        var list = document.getElementById('motivosList');
+        motivos.forEach(function (m) {
+          var li = document.createElement('li');
+          li.textContent = m.charAt(0).toUpperCase() + m.slice(1);
+          list.appendChild(li);
+        });
+        list.style.display = 'block';
+      }
+    }
+
+    // ── Bloco de perfil (Sistema/Indivíduo/Ação) ──
+    var leiturasFamiliar = {
+      'Legado em Movimento': 'A ' + empresa + ' está na parte mais sólida da régua nos três pilares ao mesmo tempo — sistema, indivíduo e ação sustentando o dia a dia sem depender só de uma pessoa. Isso não é sorte, é arquitetura bem construída. Mas legado não é linha de chegada: é o que continua de pé quando a pressão aumenta. E pressão real, mais cedo ou mais tarde, sempre vem.',
+      'Legado em Risco Estrutural': 'A ' + empresa + ' ainda depende de pessoas, não de estrutura. O que sustenta o dia a dia hoje é a presença de quem está à frente — não um sistema que continua de pé mesmo quando alguém falta.',
+      'Sucessão Travada pelo Silêncio': 'A estrutura da ' + empresa + ' pode até existir — mas quem deveria sustentá-la ainda está pedindo licença pra ocupar o lugar. Autoridade delegada não é a mesma coisa que autoridade interna.',
+      'Potencial Represado': 'A ' + empresa + ' tem base — sistema e liderança já sustentam o dia a dia. O que trava é a coragem de mudar o que sempre foi feito de um jeito só.',
+      'Arquitetura em Consolidação': 'Não existe um ponto que já quebrou — existe um conjunto que ainda está em construção, de forma parecida nos três pilares. O momento agora é formalizar o que já se pratica.',
+      'Ponto de Inflexão': 'Sistema, indivíduo e ação estão, ao mesmo tempo, na zona mais vulnerável. A sucessão nunca é um "se" — é apenas um "quando".'
+    };
+    var leiturasGestao = {
+      'Vulnerável': 'O que sustenta a ' + empresa + ' hoje é principalmente a presença de quem lidera, não uma estrutura que funciona sozinha. Isso custa caro no dia a dia — e mais caro ainda quando falta alguém.',
+      'Em Construção': 'Já existe consciência e alguns alicerces na forma como a ' + empresa + ' decide e age. O momento agora é formalizar o que já se pratica, antes que uma crise force a decisão.',
+      'Madura': 'A ' + empresa + ' já opera com clareza de decisão e senso de propósito. O que costuma travar nesse estágio não é a estrutura — é a coragem de mudar o que sempre funcionou.'
+    };
+
+    if (familiar === 'Sim' && arquetipo) {
+      var an = document.getElementById('arquetipoName');
+      an.textContent = arquetipo;
+      an.style.display = 'block';
+      document.getElementById('bodyText').textContent = leiturasFamiliar[arquetipo] || 'Vou analisar o cenário da sua empresa e volto com uma leitura sobre onde está a fragilidade real da sua sucessão.';
+    } else {
+      document.getElementById('bodyText').textContent = leiturasGestao[nivel] || 'Vou analisar o cenário da sua empresa e volto com uma leitura sobre onde está o ponto de maior fragilidade na gestão.';
+    }
+
+    if (sistemaItens === 1) {
+      document.getElementById('labelSistema').textContent = 'Processo de decisão';
+      document.getElementById('noteSistema').style.display = 'block';
+    }
+
+    // ── Aprofundamento — parágrafo de impacto dos itens que pesaram mais
+    // no pilar mais fraco (até 2). Só aparece se o pilar mais fraco não
+    // estiver numa faixa já sólida (< 71%) — não faz sentido mostrar
+    // "onde isso mais aparece" pra quem está em Legado em Movimento.
+    var PARAGRAFOS_IMPACTO = {
+      s1: 'Quando família, gestão e propriedade se misturam, ninguém sabe mais em que papel está falando. Numa hora é filho, na outra é sócio, na outra é gestor cobrando resultado do próprio pai. E toda decisão de negócio carrega peso de casa junto — decisão errada vira mágoa de Natal. Não é falta de amor. É falta de clareza sobre qual chapéu está na sua cabeça em cada conversa. Empresa que não separa isso não decide pelo melhor pra empresa. Decide pelo que machuca menos em família.',
+      s2: 'Sem regra de entrada, quem assume um cargo é decidido pelo sobrenome, não pelo preparo. E isso todo mundo vê — mesmo quando ninguém fala. A equipe aprende rápido que crescer ali depende de quem é seu pai, não do que você entrega. Isso não afasta só quem não é da família. Afasta também o familiar competente, que passa a vida inteira sendo visto como "só está aí porque é filho do dono" — mesmo quando merece estar.',
+      s3: 'Sem um plano de sucessão, a empresa não tem um plano B. Ela tem uma pessoa. E enquanto essa pessoa estiver de pé, disposta, presente, tudo parece resolvido. O problema aparece no dia em que ela não estiver — por doença, cansaço, ou só porque decidiu descansar. Nesse dia, não existe caminho desenhado pra quem assume, nem clareza de quem deveria assumir. A empresa aprende isso na pior hora possível: no meio da crise, não antes dela. E o mais caro nisso não é o tempo perdido reorganizando — é a confiança que se perde enquanto todo mundo espera alguém decidir o que fazer.',
+      s4: 'Sem processo, cada decisão importante depende de quem está por perto naquele dia — não de um critério que se repete. Isso parece flexibilidade. Não é. É instabilidade disfarçada de agilidade. Time que não sabe como uma decisão vai ser tomada aprende a não trazer decisão nenhuma. Só problema resolvido, ou problema escondido.',
+      s5: 'Sem protocolo familiar, todo desentendimento em casa acaba entrando pela porta da empresa — e todo desentendimento na empresa volta pra casa no fim do dia. Não existe separação entre o almoço de domingo e a reunião de segunda. E o que devia ser resolvido numa conversa vira mágoa que se acumula ano após ano, porque nunca teve regra combinada sobre como discordar sem quebrar o outro.',
+      i1: 'Quando você ainda precisa de aval pra decidir, quem manda no ritmo da empresa não é você. É a agenda de outra pessoa. Cada decisão vira fila de espera — e enquanto ela espera, a equipe aprende a esperar também, mesmo quando o problema é urgente. O preço disso não aparece no balanço. Aparece na velocidade que você perde pra reagir, pra corrigir, pra aproveitar uma janela que não volta duas vezes. E tem um efeito colateral pior: quem trabalha com você começa a te ver como intermediário, não como decisor. Autoridade que precisa de licença pra existir não é autoridade. É permissão emprestada.',
+      i2: 'Se você cede assim que alguém discorda com convicção, a decisão certa não sobrevive à primeira resistência. Não importa quantas vezes você tenha razão — se muda de posição toda vez que é pressionado, quem está ao redor aprende uma coisa: é só insistir um pouco mais forte. Sustentar posição não é teimosia. É a diferença entre liderar e só estar sentado na cadeira de líder.',
+      i3: 'Quando toda crítica vira ataque pessoal pra você, as pessoas ao redor aprendem rápido a parar de trazer o problema real. Elas não escondem por maldade — escondem porque já viram o que acontece quando trazem. E aí você passa a ser o último a saber do que está dando errado. Justo você, que devia ser o primeiro.',
+      i4: 'Sem limite claro, toda exceção que você abre um dia vira regra que todo mundo espera amanhã. E quando você tenta voltar atrás, parece injustiça — mesmo sendo só você corrigindo o que nunca devia ter cedido. Limite não é sobre ser durão. É sobre ser previsível: as pessoas sabem o que esperar de você, e isso, sozinho, já evita metade dos conflitos.',
+      i5: 'Quando você fala em nome da empresa mas soa como quem está repetindo o que outra pessoa diria, quem ouve percebe antes de você perceber. Convicção emprestada tem um som diferente — mais hesitante, mais cauteloso, sempre com uma ressalva pronta pra quando alguém questionar. Liderança que soa emprestada não convence ninguém, nem quando o conteúdo está certo.',
+      a1: 'Se toda mudança relevante passa pela sua aprovação pessoal, a empresa não cresce além da sua capacidade de estar em todo lugar. E ninguém está em todo lugar — nem você. Sem perceber, você virou o teto da própria empresa. Não porque falta ambição. Porque falta gente com autonomia real pra decidir sem te esperar.',
+      a2: 'Quando ideia nova não tem espaço real pra ser testada, quem tem ideia boa aprende a guardar pra si — e a empresa perde exatamente o que não sabia que tinha. Não é que faltam ideias. É que ninguém mais se arrisca a trazer uma, depois de ver a última ser descartada sem nem ter sido tentada.',
+      a3: 'Sem critério visível, até a decisão certa parece favoritismo. Porque ninguém consegue distinguir "foi a melhor escolha" de "foi a pessoa certa que pediu". E uma vez que essa dúvida se instala, ela não sai mais — cada decisão futura carrega a suspeita da anterior, mesmo quando é justa.',
+      a4: 'Quando o propósito não é claro pra quem trabalha ali, cada área acaba remando pro seu lado — e todo mundo acha que está certo, porque ninguém combinou pra onde ir. Propósito não é frase bonita na parede. É o critério que faz duas pessoas, em salas diferentes, tomarem a mesma decisão sem precisar se falar.',
+      a5: 'Se você não consegue explicar em uma frase por que essa empresa deve continuar existindo, decisão de futuro fica no impulso — não na convicção. Empresa que não sabe por que existe se apega ao que já fez, não porque funciona, mas porque é o único porto que conhece.'
+    };
+
+    var pilarMaisFraco = Math.min(sistema, individuo, acao);
+    if (pilarMaisFraco < 71 && itensFracos.length) {
+      var wrap = document.getElementById('aprofundamentoTexts');
+      itensFracos.forEach(function (code) {
+        if (!PARAGRAFOS_IMPACTO[code]) return;
+        var p = document.createElement('p');
+        p.className = 'body-text';
+        p.textContent = PARAGRAFOS_IMPACTO[code];
+        wrap.appendChild(p);
+      });
+      if (wrap.children.length) document.getElementById('aprofundamento').style.display = 'block';
+    }
+
+    function fillBar(pctId, fillId, rowId, value) {
+      document.getElementById(pctId).textContent = value + '%';
+      requestAnimationFrame(function () { document.getElementById(fillId).style.width = value + '%'; });
+      if (value <= 40) document.getElementById(rowId).classList.add('pilar-frail');
+    }
+    fillBar('pctSistema', 'fillSistema', 'rowSistema', sistema);
+    fillBar('pctIndividuo', 'fillIndividuo', 'rowIndividuo', individuo);
+    fillBar('pctAcao', 'fillAcao', 'rowAcao', acao);
+
+    // ── CTA único (WhatsApp) ──
+    var waText = 'Olá, preenchi o diagnóstico da Tríade do Legado sobre a ' + empresa + '.';
+    if (hasDivida === 'Sim' && critNivel) waText += ' Grau de criticidade da dívida: ' + critNivel + '.';
+    if (nivel) waText += ' Nível de maturidade: ' + nivel + (arquetipo ? ' (' + arquetipo + ')' : '') + '.';
+    waText += ' Quero falar agora.';
+    document.getElementById('ctaBtn').href = 'https://wa.me/5511926331795?text=' + encodeURIComponent(waText);
+  </script>
+</body>
+</html>
