@@ -95,9 +95,28 @@
       border-color: var(--gold); background: var(--white);
     }
 
+    .consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .consent input[type="checkbox"] {
+      margin-top: 3px;
+      width: 16px; height: 16px;
+      accent-color: var(--gold);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .consent label {
+      margin: 0;
+      font-size: 12.5px; font-weight: 400; color: var(--muted); line-height: 1.6;
+      cursor: pointer;
+    }
+
     .btn-submit {
       width: 100%;
-      margin-top: 30px;
+      margin-top: 22px;
       padding: 15px 24px;
       background: var(--navy);
       color: var(--white);
@@ -155,6 +174,11 @@
       <label for="telefone">Telefone / WhatsApp</label>
       <input type="tel" id="telefone" name="Telefone" placeholder="(11) 90000-0000" required>
 
+      <div class="consent">
+        <input type="checkbox" id="aceite" name="Aceite de contato" value="Sim" required>
+        <label for="aceite">Aceito receber contato da Tríade do Legado sobre esta visita, por e-mail, telefone ou WhatsApp.</label>
+      </div>
+
       <button type="submit" class="btn-submit">Quero manifestar interesse</button>
       <p class="disclaimer">Sem data definida ainda — você só está entrando na lista de interesse.</p>
     </form>
@@ -170,6 +194,7 @@
       data.append('CNPJ', document.getElementById('cnpj').value);
       data.append('E-mail', document.getElementById('email').value);
       data.append('Telefone', document.getElementById('telefone').value);
+      data.append('Aceite de contato', document.getElementById('aceite').checked ? 'Sim' : 'Não');
       data.append('_form', 'visita-fabrica');
       fetch('https://script.google.com/macros/s/AKfycbyJV0lGXj5WgRXA1mGGaSUaVrLVdXHaD4OlIh_6LV4nRSKrSpbn1fOBXxHTKVxHH7OYrg/exec', {
         method: 'POST',
