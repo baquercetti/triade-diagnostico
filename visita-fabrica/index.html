@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visita à Fábrica — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #111E29;
+      --gold:     #BC9B5F;
+      --burgundy: #571C25;
+      --white:    #FFFFFF;
+      --off:      #F5F4F2;
+      --muted:    #6B7680;
+      --border:   #D6D6D6;
+      --r:        8px;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--off);
+      color: var(--navy);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--white);
+      border-radius: 12px;
+      padding: 44px 40px 40px;
+      box-shadow: 0 12px 40px rgba(17,30,41,.08);
+    }
+
+    .eyebrow {
+      font-size: 10px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 5vw, 34px);
+      font-weight: 600; line-height: 1.3; color: var(--navy); margin-bottom: 18px;
+    }
+
+    .intro {
+      font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 10px;
+    }
+
+    .local-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(188,155,95,.08);
+      border: 1px solid rgba(188,155,95,.35);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      margin: 22px 0 30px;
+    }
+    .local-box .pin {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; color: var(--gold); line-height: 1;
+    }
+    .local-box p {
+      font-size: 13.5px; color: var(--navy); line-height: 1.6;
+    }
+    .local-box strong { color: var(--burgundy); }
+
+    label {
+      display: block;
+      font-size: 12px; font-weight: 500; color: var(--navy);
+      margin-bottom: 6px; margin-top: 20px;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"], input[type="email"], input[type="tel"] {
+      width: 100%; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: var(--r);
+      font-family: 'Montserrat', sans-serif; font-size: 15px;
+      color: var(--navy); background: var(--off); outline: none; transition: border-color .2s, background .2s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+      border-color: var(--gold); background: var(--white);
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 30px;
+      padding: 15px 24px;
+      background: var(--navy);
+      color: var(--white);
+      border: none; border-radius: var(--r);
+      font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 500;
+      letter-spacing: .3px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-submit:hover { background: #1c3040; }
+
+    .disclaimer {
+      margin-top: 18px;
+      font-size: 11px; color: var(--muted); line-height: 1.6; text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="card">
+    <div class="eyebrow">Tríade do Legado</div>
+    <h1>Visita in loco à fábrica — manifeste seu interesse</h1>
+    <p class="intro">
+      Estamos organizando uma visita in loco para conhecer a fábrica por
+      dentro. Ainda não temos data nem formato definidos — este formulário é
+      só para marcar seu interesse. Assim que os detalhes estiverem
+      fechados, entramos em contato com quem se manifestou aqui.
+    </p>
+
+    <div class="local-box">
+      <span class="pin">◆</span>
+      <p>A fábrica fica em <strong>Araras, interior de São Paulo (SP)</strong>. Considere isso ao demonstrar interesse — a visita será presencial, nesse local.</p>
+    </div>
+
+    <form id="visitaForm" action="https://formsubmit.co/quercettiproducoes@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Interesse em visita à fábrica — Tríade do Legado">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://baquercetti.github.io/triade-diagnostico/visita-fabrica/obrigada.html">
+      <input type="hidden" name="_form" value="visita-fabrica">
+
+      <label for="nome">Nome completo</label>
+      <input type="text" id="nome" name="Nome completo" placeholder="Seu nome" required>
+
+      <label for="empresa">Empresa</label>
+      <input type="text" id="empresa" name="Empresa" placeholder="Nome da empresa" required>
+
+      <label for="cnpj">CNPJ</label>
+      <input type="text" id="cnpj" name="CNPJ" placeholder="00.000.000/0000-00" required>
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="E-mail" placeholder="seuemail@empresa.com" required>
+
+      <label for="telefone">Telefone / WhatsApp</label>
+      <input type="tel" id="telefone" name="Telefone" placeholder="(11) 90000-0000" required>
+
+      <button type="submit" class="btn-submit">Quero manifestar interesse</button>
+      <p class="disclaimer">Sem data definida ainda — você só está entrando na lista de interesse.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('visitaForm').addEventListener('submit', function () {
+    try {
+      var data = new FormData();
+      data.append('Nome completo', document.getElementById('nome').value);
+      data.append('Empresa', document.getElementById('empresa').value);
+      data.append('CNPJ', document.getElementById('cnpj').value);
+      data.append('E-mail', document.getElementById('email').value);
+      data.append('Telefone', document.getElementById('telefone').value);
+      data.append('_form', 'visita-fabrica');
+      fetch('https://script.google.com/macros/s/AKfycbyJV0lGXj5WgRXA1mGGaSUaVrLVdXHaD4OlIh_6LV4nRSKrSpbn1fOBXxHTKVxHH7OYrg/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        keepalive: true,
+        body: data
+      });
+    } catch (err) {}
+  });
+</script>
+
+</body>
+</html>
