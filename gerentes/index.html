@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Diagnóstico de Gestão — Visão dos Gerentes — Tríade do Legado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #111E29;
+      --gold:     #BC9B5F;
+      --white:    #FFFFFF;
+      --off:      #F5F4F2;
+      --muted:    #6B7680;
+      --border:   #D6D6D6;
+      --r:        8px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: var(--off);
+      color: var(--navy);
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--navy);
+      padding: 14px 24px 0;
+    }
+    .top-bar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+    }
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: var(--white);
+      letter-spacing: .3px;
+    }
+    .step-counter {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,.45);
+      letter-spacing: .5px;
+    }
+    .progress-track {
+      height: 3px;
+      background: rgba(255,255,255,.15);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width .35s ease;
+      width: 0%;
+    }
+
+    /* ── WRAPPER ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 100px;
+    }
+
+    /* ── STEP CARD ── */
+    .step {
+      display: none;
+      width: 100%;
+      max-width: 640px;
+      animation: fadeUp .22s ease;
+    }
+    .step.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .block-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .step-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--navy);
+      margin-bottom: 28px;
+    }
+
+    /* ── INPUTS ── */
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 14px 0;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      border-radius: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      color: var(--navy);
+      background: transparent;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus { border-color: var(--gold); }
+    textarea { min-height: 90px; resize: none; }
+
+    /* ── ROUTING / CHOICE OPTIONS ── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .options input[type="radio"] { display: none; }
+    .options label {
+      padding: 14px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      cursor: pointer;
+      font-size: 15px;
+      transition: all .15s;
+      background: var(--white);
+    }
+    .options input[type="radio"]:checked + label {
+      border-color: var(--gold);
+      background: rgba(188,155,95,.08);
+      font-weight: 500;
+    }
+
+    /* ── SCALE 1–10 ── */
+    .scale-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
+    .scale-wrap input[type="radio"] { display: none; }
+    .scale-wrap label {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font-size: 15px; font-weight: 500;
+      cursor: pointer;
+      background: var(--white);
+      transition: all .15s;
+    }
+    .scale-wrap label:hover { border-color: var(--gold); color: var(--gold); }
+    .scale-wrap input[type="radio"]:checked + label {
+      background: var(--navy); color: var(--white); border-color: var(--navy);
+    }
+    .scale-ends {
+      display: flex; justify-content: space-between; margin-top: 8px;
+    }
+    .scale-ends span { font-size: 11px; color: var(--muted); }
+
+    /* ── YES/NO ── */
+    .yn-wrap { display: flex; gap: 12px; }
+    .yn-wrap input[type="radio"] { display: none; }
+    .yn-wrap label {
+      flex: 1; padding: 14px;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      cursor: pointer; font-size: 15px; font-weight: 500;
+      background: var(--white);
+      transition: all .15s;
+    }
+    .yn-wrap input[type="radio"]:checked + label {
+      background: var(--navy); color: var(--white); border-color: var(--navy);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      padding: 12px 22px;
+      border-radius: var(--r);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-back:disabled { opacity: .3; cursor: default; }
+
+    .btn-next {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 12px 32px;
+      border-radius: var(--r);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+      letter-spacing: .3px;
+    }
+    .btn-next:hover { background: #1c2f42; }
+    .btn-next.submit-btn { background: var(--gold); color: var(--navy); }
+    .btn-next.submit-btn:hover { background: #a8894e; }
+
+    /* ── INTRO SCREEN ── */
+    .intro-card {
+      text-align: center;
+      max-width: 580px;
+    }
+    .intro-eyebrow {
+      font-size: 10px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+    }
+    .intro-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 600; line-height: 1.2;
+      color: var(--navy); margin-bottom: 20px;
+    }
+    .intro-body {
+      font-size: 15px; color: var(--muted); line-height: 1.9;
+      margin-bottom: 32px;
+    }
+    .btn-start {
+      background: var(--navy); color: var(--white);
+      border: none; padding: 15px 44px;
+      border-radius: var(--r);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; letter-spacing: .3px;
+      transition: background .15s;
+    }
+    .btn-start:hover { background: #1c2f42; }
+
+    @media (max-width: 480px) {
+      .scale-wrap label { width: 42px; height: 42px; font-size: 13px; }
+    }
+  
+    /* ── GERENTES: extras ── */
+    .scale-wrap.likert label { width: 56px; }
+    .scale-wrap label.naosei { width: auto; padding: 0 18px; font-size: 13px; color: var(--muted); }
+    .scale-wrap input[type="radio"]:checked + label.naosei { color: var(--white); }
+    .step-hint { font-size: 13px; color: var(--muted); line-height: 1.7; margin: -14px 0 24px; }
+    .field-error { display: none; margin-top: 14px; font-size: 13px; color: #9b2c2c; }
+    .step.has-error .field-error { display: block; }
+    .intro-company { font-size: 13px; letter-spacing: 1px; color: var(--gold); margin: -8px 0 24px; }
+    .term-box {
+      border: 1.5px solid var(--border); border-radius: var(--r); background: var(--white);
+      padding: 18px 20px; font-size: 13px; line-height: 1.8; color: var(--muted); margin-bottom: 18px;
+    }
+    .term-box h4 { font-size: 13px; color: var(--navy); margin-bottom: 8px; }
+    .term-box p + p { margin-top: 10px; }
+    .consent-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; }
+    .consent-check input { margin-top: 3px; accent-color: var(--navy); flex-shrink: 0; }
+    @media (max-width: 480px) { .scale-wrap.likert label { width: 40px; } .scale-wrap label.naosei { padding: 0 12px; } }
+    @media (max-width: 380px) { .scale-wrap.likert { gap: 5px; } .scale-wrap.likert label { width: 36px; } .scale-wrap label.naosei { padding: 0 9px; font-size: 12px; } }
+  </style>
+</head>
+<body>
+
+<div class="top-bar" id="topBar" style="display:none">
+  <div class="top-bar-inner">
+    <span class="brand">Tríade do Legado</span>
+    <span class="step-counter" id="stepCounter"></span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="intro-card" id="introCard">
+    <div class="intro-eyebrow">Bárbara Quercetti</div>
+    <h1 class="intro-title">Diagnóstico de Gestão<br>Visão dos Gerentes</h1>
+    <div class="intro-company" id="introCompany" style="display:none"></div>
+    <p class="intro-body">
+      Este formulário é de uso do Programa de Aconselhamento da Tríade do Legado.<br>
+      As respostas são identificadas e não são compartilhadas na íntegra com a empresa: servem de base para o desenvolvimento do trabalho e do plano de ação.<br>
+      São cerca de 15 a 20 minutos, com perguntas de escolha e algumas abertas.
+    </p>
+    <button class="btn-start" onclick="startForm()">Começar</button>
+  </div>
+
+  <form id="diagForm" action="https://formsubmit.co/quercettiproducoes@gmail.com" method="POST" style="display:none; width:100%">
+    <input type="hidden" name="_subject" value="Novo diagnóstico — Gerentes (Programa de Aconselhamento)">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" value="https://baquercetti.github.io/triade-diagnostico/gerentes/obrigada.html">
+    <input type="hidden" name="_form" value="aconselhamento-gerentes">
+
+    <div class="step" data-condition="all" data-kind="text" data-field="01. Nome completo" data-required="1">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Qual é o seu nome completo?</div>
+      <input type="text" name="01. Nome completo" placeholder="Seu nome" autocomplete="off">
+      <div class="field-error">Preencha para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="02. Empresa" data-required="1">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Qual é o nome da empresa?</div>
+      <input type="text" name="02. Empresa" placeholder="Nome da empresa" autocomplete="off">
+      <div class="field-error">Preencha para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="03. E-mail" data-required="1">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Qual é o seu e-mail?</div>
+      <p class="step-hint">Usamos para cruzar as suas respostas com a sua análise de perfil comportamental.</p>
+      <input type="email" name="03. E-mail" placeholder="voce@empresa.com.br" autocomplete="off">
+      <div class="field-error">Preencha para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="radio" data-field="04. Área" data-required="1">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Qual é a sua área?</div>
+      <div class="options">
+        <input type="radio" name="04. Área" id="r3-0" value="Produção" data-area="sup"><label for="r3-0">Produção</label>
+        <input type="radio" name="04. Área" id="r3-1" value="Comercial" data-area="com"><label for="r3-1">Comercial</label>
+        <input type="radio" name="04. Área" id="r3-2" value="Financeiro" data-area="fin"><label for="r3-2">Financeiro</label>
+      </div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="05. Cargo">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Qual é o seu cargo?</div>
+      <input type="text" name="05. Cargo" placeholder="Seu cargo atual" autocomplete="off">
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="06. Tempo de empresa">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Há quanto tempo você está na empresa?</div>
+      <input type="text" name="06. Tempo de empresa" placeholder="Ex: 4 anos" autocomplete="off">
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="07. Pessoas na equipe">
+      <div class="block-eyebrow">Bloco 01 · Identificação</div>
+      <div class="step-question">Quantas pessoas fazem parte da sua equipe?</div>
+      <input type="text" name="07. Pessoas na equipe" placeholder="Ex: 12" autocomplete="off">
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="08. Alçada de decisão" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">Sei quais decisões posso tomar sozinho(a) e quais dependem do dono(a).</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="08. Alçada de decisão" id="l7-1" value="1"><label for="l7-1">1</label>
+        <input type="radio" name="08. Alçada de decisão" id="l7-2" value="2"><label for="l7-2">2</label>
+        <input type="radio" name="08. Alçada de decisão" id="l7-3" value="3"><label for="l7-3">3</label>
+        <input type="radio" name="08. Alçada de decisão" id="l7-4" value="4"><label for="l7-4">4</label>
+        <input type="radio" name="08. Alçada de decisão" id="l7-5" value="5"><label for="l7-5">5</label>
+        <input type="radio" name="08. Alçada de decisão" id="l7-ns" value="Não sei"><label class="naosei" for="l7-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="09. Papéis claros" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">Os papéis e as responsabilidades de cada gerência estão claros e escritos.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="09. Papéis claros" id="l8-1" value="1"><label for="l8-1">1</label>
+        <input type="radio" name="09. Papéis claros" id="l8-2" value="2"><label for="l8-2">2</label>
+        <input type="radio" name="09. Papéis claros" id="l8-3" value="3"><label for="l8-3">3</label>
+        <input type="radio" name="09. Papéis claros" id="l8-4" value="4"><label for="l8-4">4</label>
+        <input type="radio" name="09. Papéis claros" id="l8-5" value="5"><label for="l8-5">5</label>
+        <input type="radio" name="09. Papéis claros" id="l8-ns" value="Não sei"><label class="naosei" for="l8-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="10. Organograma real" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">O organograma reflete quem de fato decide cada assunto.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="10. Organograma real" id="l9-1" value="1"><label for="l9-1">1</label>
+        <input type="radio" name="10. Organograma real" id="l9-2" value="2"><label for="l9-2">2</label>
+        <input type="radio" name="10. Organograma real" id="l9-3" value="3"><label for="l9-3">3</label>
+        <input type="radio" name="10. Organograma real" id="l9-4" value="4"><label for="l9-4">4</label>
+        <input type="radio" name="10. Organograma real" id="l9-5" value="5"><label for="l9-5">5</label>
+        <input type="radio" name="10. Organograma real" id="l9-ns" value="Não sei"><label class="naosei" for="l9-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="11. Reuniões de gestão" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">As reuniões de gestão têm frequência e pauta, e o que sai delas é cobrado.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="11. Reuniões de gestão" id="l10-1" value="1"><label for="l10-1">1</label>
+        <input type="radio" name="11. Reuniões de gestão" id="l10-2" value="2"><label for="l10-2">2</label>
+        <input type="radio" name="11. Reuniões de gestão" id="l10-3" value="3"><label for="l10-3">3</label>
+        <input type="radio" name="11. Reuniões de gestão" id="l10-4" value="4"><label for="l10-4">4</label>
+        <input type="radio" name="11. Reuniões de gestão" id="l10-5" value="5"><label for="l10-5">5</label>
+        <input type="radio" name="11. Reuniões de gestão" id="l10-ns" value="Não sei"><label class="naosei" for="l10-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="12. Decisões compartilhadas" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">As decisões estratégicas são compartilhadas com a gerência, não concentradas no dono(a).</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-1" value="1"><label for="l11-1">1</label>
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-2" value="2"><label for="l11-2">2</label>
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-3" value="3"><label for="l11-3">3</label>
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-4" value="4"><label for="l11-4">4</label>
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-5" value="5"><label for="l11-5">5</label>
+        <input type="radio" name="12. Decisões compartilhadas" id="l11-ns" value="Não sei"><label class="naosei" for="l11-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="13. Regras valem para todos" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">As regras da empresa (compras, desconto, aprovação de despesa, contratação) valem para todos, inclusive para a família.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="13. Regras valem para todos" id="l12-1" value="1"><label for="l12-1">1</label>
+        <input type="radio" name="13. Regras valem para todos" id="l12-2" value="2"><label for="l12-2">2</label>
+        <input type="radio" name="13. Regras valem para todos" id="l12-3" value="3"><label for="l12-3">3</label>
+        <input type="radio" name="13. Regras valem para todos" id="l12-4" value="4"><label for="l12-4">4</label>
+        <input type="radio" name="13. Regras valem para todos" id="l12-5" value="5"><label for="l12-5">5</label>
+        <input type="radio" name="13. Regras valem para todos" id="l12-ns" value="Não sei"><label class="naosei" for="l12-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="14. Metas e indicadores" data-required="1">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">A minha área tem metas e indicadores com número, prazo e responsável.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="14. Metas e indicadores" id="l13-1" value="1"><label for="l13-1">1</label>
+        <input type="radio" name="14. Metas e indicadores" id="l13-2" value="2"><label for="l13-2">2</label>
+        <input type="radio" name="14. Metas e indicadores" id="l13-3" value="3"><label for="l13-3">3</label>
+        <input type="radio" name="14. Metas e indicadores" id="l13-4" value="4"><label for="l13-4">4</label>
+        <input type="radio" name="14. Metas e indicadores" id="l13-5" value="5"><label for="l13-5">5</label>
+        <input type="radio" name="14. Metas e indicadores" id="l13-ns" value="Não sei"><label class="naosei" for="l13-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="15. Indicadores mensais">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">Quais indicadores vocês controlam mensalmente?</div>
+      <textarea name="15. Indicadores mensais" placeholder="Liste os principais. Se não houver, escreva que não há."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="16. Uso dos indicadores">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">Como vocês usam os indicadores no dia a dia? (caso tenham)</div>
+      <textarea name="16. Uso dos indicadores" placeholder="Quem olha, com que frequência e que decisão muda por causa deles."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="17. Decisão recente">
+      <div class="block-eyebrow">Bloco 02 · Sistema: governança e decisão</div>
+      <div class="step-question">Pense numa decisão importante tomada recentemente na sua área. Como foi o caminho até ela?</div>
+      <textarea name="17. Decisão recente" placeholder="Quem participou, quanto tempo levou, quem decidiu no fim."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="18. Sem o dono 30 dias" data-required="1">
+      <div class="block-eyebrow">Bloco 03 · Sistema: a empresa sem depender de pessoas</div>
+      <div class="step-question">Se o dono(a) ficasse 30 dias sem contato, a minha área seguiria funcionando normalmente.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-1" value="1"><label for="l17-1">1</label>
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-2" value="2"><label for="l17-2">2</label>
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-3" value="3"><label for="l17-3">3</label>
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-4" value="4"><label for="l17-4">4</label>
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-5" value="5"><label for="l17-5">5</label>
+        <input type="radio" name="18. Sem o dono 30 dias" id="l17-ns" value="Não sei"><label class="naosei" for="l17-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="19. Sem mim 30 dias" data-required="1">
+      <div class="block-eyebrow">Bloco 03 · Sistema: a empresa sem depender de pessoas</div>
+      <div class="step-question">Se eu ficasse 30 dias fora, alguém assumiria o que faço com base em processo documentado.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-1" value="1"><label for="l18-1">1</label>
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-2" value="2"><label for="l18-2">2</label>
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-3" value="3"><label for="l18-3">3</label>
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-4" value="4"><label for="l18-4">4</label>
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-5" value="5"><label for="l18-5">5</label>
+        <input type="radio" name="19. Sem mim 30 dias" id="l18-ns" value="Não sei"><label class="naosei" for="l18-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="20. Processos documentados" data-required="1">
+      <div class="block-eyebrow">Bloco 03 · Sistema: a empresa sem depender de pessoas</div>
+      <div class="step-question">Os processos-chave da minha área estão documentados e são seguidos na prática.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="20. Processos documentados" id="l19-1" value="1"><label for="l19-1">1</label>
+        <input type="radio" name="20. Processos documentados" id="l19-2" value="2"><label for="l19-2">2</label>
+        <input type="radio" name="20. Processos documentados" id="l19-3" value="3"><label for="l19-3">3</label>
+        <input type="radio" name="20. Processos documentados" id="l19-4" value="4"><label for="l19-4">4</label>
+        <input type="radio" name="20. Processos documentados" id="l19-5" value="5"><label for="l19-5">5</label>
+        <input type="radio" name="20. Processos documentados" id="l19-ns" value="Não sei"><label class="naosei" for="l19-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="21. Informação acessível" data-required="1">
+      <div class="block-eyebrow">Bloco 03 · Sistema: a empresa sem depender de pessoas</div>
+      <div class="step-question">As informações de que preciso (números, contratos, contatos) estão em sistema acessível, e não na cabeça de uma pessoa.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="21. Informação acessível" id="l20-1" value="1"><label for="l20-1">1</label>
+        <input type="radio" name="21. Informação acessível" id="l20-2" value="2"><label for="l20-2">2</label>
+        <input type="radio" name="21. Informação acessível" id="l20-3" value="3"><label for="l20-3">3</label>
+        <input type="radio" name="21. Informação acessível" id="l20-4" value="4"><label for="l20-4">4</label>
+        <input type="radio" name="21. Informação acessível" id="l20-5" value="5"><label for="l20-5">5</label>
+        <input type="radio" name="21. Informação acessível" id="l20-ns" value="Não sei"><label class="naosei" for="l20-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="22. Dados entre áreas" data-required="1">
+      <div class="block-eyebrow">Bloco 03 · Sistema: a empresa sem depender de pessoas</div>
+      <div class="step-question">Os dados que recebo das outras áreas chegam corretos e a tempo.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="22. Dados entre áreas" id="l21-1" value="1"><label for="l21-1">1</label>
+        <input type="radio" name="22. Dados entre áreas" id="l21-2" value="2"><label for="l21-2">2</label>
+        <input type="radio" name="22. Dados entre áreas" id="l21-3" value="3"><label for="l21-3">3</label>
+        <input type="radio" name="22. Dados entre áreas" id="l21-4" value="4"><label for="l21-4">4</label>
+        <input type="radio" name="22. Dados entre áreas" id="l21-5" value="5"><label for="l21-5">5</label>
+        <input type="radio" name="22. Dados entre áreas" id="l21-ns" value="Não sei"><label class="naosei" for="l21-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="23. Produção: planejamento" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">O planejamento da produção parte de uma previsão de demanda, não da urgência do dia.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="23. Produção: planejamento" id="l22-1" value="1"><label for="l22-1">1</label>
+        <input type="radio" name="23. Produção: planejamento" id="l22-2" value="2"><label for="l22-2">2</label>
+        <input type="radio" name="23. Produção: planejamento" id="l22-3" value="3"><label for="l22-3">3</label>
+        <input type="radio" name="23. Produção: planejamento" id="l22-4" value="4"><label for="l22-4">4</label>
+        <input type="radio" name="23. Produção: planejamento" id="l22-5" value="5"><label for="l22-5">5</label>
+        <input type="radio" name="23. Produção: planejamento" id="l22-ns" value="Não sei"><label class="naosei" for="l22-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="24. Produção: estoque" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">Os níveis de estoque (mínimo e máximo) são definidos e o estoque físico confere com o sistema.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="24. Produção: estoque" id="l23-1" value="1"><label for="l23-1">1</label>
+        <input type="radio" name="24. Produção: estoque" id="l23-2" value="2"><label for="l23-2">2</label>
+        <input type="radio" name="24. Produção: estoque" id="l23-3" value="3"><label for="l23-3">3</label>
+        <input type="radio" name="24. Produção: estoque" id="l23-4" value="4"><label for="l23-4">4</label>
+        <input type="radio" name="24. Produção: estoque" id="l23-5" value="5"><label for="l23-5">5</label>
+        <input type="radio" name="24. Produção: estoque" id="l23-ns" value="Não sei"><label class="naosei" for="l23-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="25. Produção: compras" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">As compras seguem critério e cotação, e não dependem de relacionamento pessoal.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="25. Produção: compras" id="l24-1" value="1"><label for="l24-1">1</label>
+        <input type="radio" name="25. Produção: compras" id="l24-2" value="2"><label for="l24-2">2</label>
+        <input type="radio" name="25. Produção: compras" id="l24-3" value="3"><label for="l24-3">3</label>
+        <input type="radio" name="25. Produção: compras" id="l24-4" value="4"><label for="l24-4">4</label>
+        <input type="radio" name="25. Produção: compras" id="l24-5" value="5"><label for="l24-5">5</label>
+        <input type="radio" name="25. Produção: compras" id="l24-ns" value="Não sei"><label class="naosei" for="l24-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="26. Produção: qualidade" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">Existem padrões de qualidade e acompanhamos indicadores de não conformidade e retrabalho.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="26. Produção: qualidade" id="l25-1" value="1"><label for="l25-1">1</label>
+        <input type="radio" name="26. Produção: qualidade" id="l25-2" value="2"><label for="l25-2">2</label>
+        <input type="radio" name="26. Produção: qualidade" id="l25-3" value="3"><label for="l25-3">3</label>
+        <input type="radio" name="26. Produção: qualidade" id="l25-4" value="4"><label for="l25-4">4</label>
+        <input type="radio" name="26. Produção: qualidade" id="l25-5" value="5"><label for="l25-5">5</label>
+        <input type="radio" name="26. Produção: qualidade" id="l25-ns" value="Não sei"><label class="naosei" for="l25-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="27. Produção: custo do produto" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">O custo de cada produto é conhecido e atualizado com regularidade.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="27. Produção: custo do produto" id="l26-1" value="1"><label for="l26-1">1</label>
+        <input type="radio" name="27. Produção: custo do produto" id="l26-2" value="2"><label for="l26-2">2</label>
+        <input type="radio" name="27. Produção: custo do produto" id="l26-3" value="3"><label for="l26-3">3</label>
+        <input type="radio" name="27. Produção: custo do produto" id="l26-4" value="4"><label for="l26-4">4</label>
+        <input type="radio" name="27. Produção: custo do produto" id="l26-5" value="5"><label for="l26-5">5</label>
+        <input type="radio" name="27. Produção: custo do produto" id="l26-ns" value="Não sei"><label class="naosei" for="l26-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="28. Produção: manutenção" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">A manutenção dos equipamentos é preventiva, não só corretiva.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="28. Produção: manutenção" id="l27-1" value="1"><label for="l27-1">1</label>
+        <input type="radio" name="28. Produção: manutenção" id="l27-2" value="2"><label for="l27-2">2</label>
+        <input type="radio" name="28. Produção: manutenção" id="l27-3" value="3"><label for="l27-3">3</label>
+        <input type="radio" name="28. Produção: manutenção" id="l27-4" value="4"><label for="l27-4">4</label>
+        <input type="radio" name="28. Produção: manutenção" id="l27-5" value="5"><label for="l27-5">5</label>
+        <input type="radio" name="28. Produção: manutenção" id="l27-ns" value="Não sei"><label class="naosei" for="l27-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="likert" data-field="29. Produção: fornecedor crítico" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">Para os fornecedores críticos existe alternativa caso um deles falhe.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-1" value="1"><label for="l28-1">1</label>
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-2" value="2"><label for="l28-2">2</label>
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-3" value="3"><label for="l28-3">3</label>
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-4" value="4"><label for="l28-4">4</label>
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-5" value="5"><label for="l28-5">5</label>
+        <input type="radio" name="29. Produção: fornecedor crítico" id="l28-ns" value="Não sei"><label class="naosei" for="l28-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="sup" data-kind="textarea" data-field="30. Produção: maior gargalo">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Produção)</div>
+      <div class="step-question">Qual é hoje o maior gargalo ou a maior perda na operação?</div>
+      <textarea name="30. Produção: maior gargalo" placeholder="Seja específico(a): onde, quando, quanto custa."></textarea>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="31. Comercial: processo comercial" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">O processo comercial tem etapas definidas e é registrado em CRM ou sistema equivalente.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-1" value="1"><label for="l30-1">1</label>
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-2" value="2"><label for="l30-2">2</label>
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-3" value="3"><label for="l30-3">3</label>
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-4" value="4"><label for="l30-4">4</label>
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-5" value="5"><label for="l30-5">5</label>
+        <input type="radio" name="31. Comercial: processo comercial" id="l30-ns" value="Não sei"><label class="naosei" for="l30-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="32. Comercial: preço e desconto" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">A política de preço e desconto é clara, com alçada definida para quem pode conceder.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-1" value="1"><label for="l31-1">1</label>
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-2" value="2"><label for="l31-2">2</label>
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-3" value="3"><label for="l31-3">3</label>
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-4" value="4"><label for="l31-4">4</label>
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-5" value="5"><label for="l31-5">5</label>
+        <input type="radio" name="32. Comercial: preço e desconto" id="l31-ns" value="Não sei"><label class="naosei" for="l31-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="33. Comercial: previsão e metas" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">A previsão de vendas e as metas são realistas e acompanhadas.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-1" value="1"><label for="l32-1">1</label>
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-2" value="2"><label for="l32-2">2</label>
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-3" value="3"><label for="l32-3">3</label>
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-4" value="4"><label for="l32-4">4</label>
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-5" value="5"><label for="l32-5">5</label>
+        <input type="radio" name="33. Comercial: previsão e metas" id="l32-ns" value="Não sei"><label class="naosei" for="l32-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="34. Comercial: comissão e margem" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">A comissão e a remuneração comercial estão alinhadas com a margem, e não só com o volume.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-1" value="1"><label for="l33-1">1</label>
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-2" value="2"><label for="l33-2">2</label>
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-3" value="3"><label for="l33-3">3</label>
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-4" value="4"><label for="l33-4">4</label>
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-5" value="5"><label for="l33-5">5</label>
+        <input type="radio" name="34. Comercial: comissão e margem" id="l33-ns" value="Não sei"><label class="naosei" for="l33-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="35. Comercial: margem por produto e cliente" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">Conhecemos a margem por produto e por cliente.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-1" value="1"><label for="l34-1">1</label>
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-2" value="2"><label for="l34-2">2</label>
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-3" value="3"><label for="l34-3">3</label>
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-4" value="4"><label for="l34-4">4</label>
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-5" value="5"><label for="l34-5">5</label>
+        <input type="radio" name="35. Comercial: margem por produto e cliente" id="l34-ns" value="Não sei"><label class="naosei" for="l34-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="36. Comercial: contas grandes" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">As contas grandes não dependem do dono(a) para serem negociadas ou mantidas.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-1" value="1"><label for="l35-1">1</label>
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-2" value="2"><label for="l35-2">2</label>
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-3" value="3"><label for="l35-3">3</label>
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-4" value="4"><label for="l35-4">4</label>
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-5" value="5"><label for="l35-5">5</label>
+        <input type="radio" name="36. Comercial: contas grandes" id="l35-ns" value="Não sei"><label class="naosei" for="l35-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="likert" data-field="37. Comercial: prazo com a produção" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">Antes de prometer prazo ao cliente, alinhamos a capacidade com a produção.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-1" value="1"><label for="l36-1">1</label>
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-2" value="2"><label for="l36-2">2</label>
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-3" value="3"><label for="l36-3">3</label>
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-4" value="4"><label for="l36-4">4</label>
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-5" value="5"><label for="l36-5">5</label>
+        <input type="radio" name="37. Comercial: prazo com a produção" id="l36-ns" value="Não sei"><label class="naosei" for="l36-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="com" data-kind="textarea" data-field="38. Comercial: maior gargalo">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Comercial)</div>
+      <div class="step-question">Qual é hoje o maior gargalo ou a maior perda na área comercial?</div>
+      <textarea name="38. Comercial: maior gargalo" placeholder="Seja específico(a): onde, quando, quanto custa."></textarea>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="39. Financeiro: fluxo de caixa" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">Existe fluxo de caixa projetado para 90 dias ou mais, atualizado com regularidade.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-1" value="1"><label for="l38-1">1</label>
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-2" value="2"><label for="l38-2">2</label>
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-3" value="3"><label for="l38-3">3</label>
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-4" value="4"><label for="l38-4">4</label>
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-5" value="5"><label for="l38-5">5</label>
+        <input type="radio" name="39. Financeiro: fluxo de caixa" id="l38-ns" value="Não sei"><label class="naosei" for="l38-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="40. Financeiro: fechamento mensal" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">O fechamento mensal (DRE) sai confiável e no prazo.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-1" value="1"><label for="l39-1">1</label>
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-2" value="2"><label for="l39-2">2</label>
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-3" value="3"><label for="l39-3">3</label>
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-4" value="4"><label for="l39-4">4</label>
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-5" value="5"><label for="l39-5">5</label>
+        <input type="radio" name="40. Financeiro: fechamento mensal" id="l39-ns" value="Não sei"><label class="naosei" for="l39-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="41. Financeiro: empresa x família" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">As finanças da empresa e as da família ou do dono(a) são separadas na prática.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-1" value="1"><label for="l40-1">1</label>
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-2" value="2"><label for="l40-2">2</label>
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-3" value="3"><label for="l40-3">3</label>
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-4" value="4"><label for="l40-4">4</label>
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-5" value="5"><label for="l40-5">5</label>
+        <input type="radio" name="41. Financeiro: empresa x família" id="l40-ns" value="Não sei"><label class="naosei" for="l40-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="42. Financeiro: aprovação de pagamento" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">Contas a pagar têm fluxo de aprovação: quem solicita não é quem paga.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-1" value="1"><label for="l41-1">1</label>
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-2" value="2"><label for="l41-2">2</label>
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-3" value="3"><label for="l41-3">3</label>
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-4" value="4"><label for="l41-4">4</label>
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-5" value="5"><label for="l41-5">5</label>
+        <input type="radio" name="42. Financeiro: aprovação de pagamento" id="l41-ns" value="Não sei"><label class="naosei" for="l41-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="43. Financeiro: orçamento" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">Existe orçamento anual e ele é acompanhado.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-1" value="1"><label for="l42-1">1</label>
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-2" value="2"><label for="l42-2">2</label>
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-3" value="3"><label for="l42-3">3</label>
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-4" value="4"><label for="l42-4">4</label>
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-5" value="5"><label for="l42-5">5</label>
+        <input type="radio" name="43. Financeiro: orçamento" id="l42-ns" value="Não sei"><label class="naosei" for="l42-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="44. Financeiro: endividamento" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">O endividamento e o custo das dívidas são monitorados.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-1" value="1"><label for="l43-1">1</label>
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-2" value="2"><label for="l43-2">2</label>
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-3" value="3"><label for="l43-3">3</label>
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-4" value="4"><label for="l43-4">4</label>
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-5" value="5"><label for="l43-5">5</label>
+        <input type="radio" name="44. Financeiro: endividamento" id="l43-ns" value="Não sei"><label class="naosei" for="l43-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="likert" data-field="45. Financeiro: obrigações fiscais" data-required="1">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">As obrigações fiscais e tributárias estão em dia, sem risco escondido.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-1" value="1"><label for="l44-1">1</label>
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-2" value="2"><label for="l44-2">2</label>
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-3" value="3"><label for="l44-3">3</label>
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-4" value="4"><label for="l44-4">4</label>
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-5" value="5"><label for="l44-5">5</label>
+        <input type="radio" name="45. Financeiro: obrigações fiscais" id="l44-ns" value="Não sei"><label class="naosei" for="l44-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="fin" data-kind="textarea" data-field="46. Financeiro: maior gargalo">
+      <div class="block-eyebrow">Bloco 04 · Sistema: a sua área (Financeiro)</div>
+      <div class="step-question">Qual é hoje o maior gargalo ou a maior perda na área financeira?</div>
+      <textarea name="46. Financeiro: maior gargalo" placeholder="Seja específico(a): onde, quando, quanto custa."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="47. Direção clara" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">A direção e as prioridades da empresa são claras e chegam à gerência.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="47. Direção clara" id="l46-1" value="1"><label for="l46-1">1</label>
+        <input type="radio" name="47. Direção clara" id="l46-2" value="2"><label for="l46-2">2</label>
+        <input type="radio" name="47. Direção clara" id="l46-3" value="3"><label for="l46-3">3</label>
+        <input type="radio" name="47. Direção clara" id="l46-4" value="4"><label for="l46-4">4</label>
+        <input type="radio" name="47. Direção clara" id="l46-5" value="5"><label for="l46-5">5</label>
+        <input type="radio" name="47. Direção clara" id="l46-ns" value="Não sei"><label class="naosei" for="l46-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="48. Áreas juntas" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">As áreas trabalham em conjunto, sem cada uma ficar isolada no seu canto.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="48. Áreas juntas" id="l47-1" value="1"><label for="l47-1">1</label>
+        <input type="radio" name="48. Áreas juntas" id="l47-2" value="2"><label for="l47-2">2</label>
+        <input type="radio" name="48. Áreas juntas" id="l47-3" value="3"><label for="l47-3">3</label>
+        <input type="radio" name="48. Áreas juntas" id="l47-4" value="4"><label for="l47-4">4</label>
+        <input type="radio" name="48. Áreas juntas" id="l47-5" value="5"><label for="l47-5">5</label>
+        <input type="radio" name="48. Áreas juntas" id="l47-ns" value="Não sei"><label class="naosei" for="l47-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="49. Discordar com franqueza" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Posso discordar do dono(a) com franqueza, sem risco para mim.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="49. Discordar com franqueza" id="l48-1" value="1"><label for="l48-1">1</label>
+        <input type="radio" name="49. Discordar com franqueza" id="l48-2" value="2"><label for="l48-2">2</label>
+        <input type="radio" name="49. Discordar com franqueza" id="l48-3" value="3"><label for="l48-3">3</label>
+        <input type="radio" name="49. Discordar com franqueza" id="l48-4" value="4"><label for="l48-4">4</label>
+        <input type="radio" name="49. Discordar com franqueza" id="l48-5" value="5"><label for="l48-5">5</label>
+        <input type="radio" name="49. Discordar com franqueza" id="l48-ns" value="Não sei"><label class="naosei" for="l48-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="50. Feedback" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Dar e receber feedback acontece com regularidade.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="50. Feedback" id="l49-1" value="1"><label for="l49-1">1</label>
+        <input type="radio" name="50. Feedback" id="l49-2" value="2"><label for="l49-2">2</label>
+        <input type="radio" name="50. Feedback" id="l49-3" value="3"><label for="l49-3">3</label>
+        <input type="radio" name="50. Feedback" id="l49-4" value="4"><label for="l49-4">4</label>
+        <input type="radio" name="50. Feedback" id="l49-5" value="5"><label for="l49-5">5</label>
+        <input type="radio" name="50. Feedback" id="l49-ns" value="Não sei"><label class="naosei" for="l49-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="51. Conflitos entre áreas" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Conflitos entre áreas se resolvem por regra ou conversa, sem precisar ir ao dono(a).</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-1" value="1"><label for="l50-1">1</label>
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-2" value="2"><label for="l50-2">2</label>
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-3" value="3"><label for="l50-3">3</label>
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-4" value="4"><label for="l50-4">4</label>
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-5" value="5"><label for="l50-5">5</label>
+        <input type="radio" name="51. Conflitos entre áreas" id="l50-ns" value="Não sei"><label class="naosei" for="l50-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="52. Remuneração e reconhecimento" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Remuneração e reconhecimento seguem critérios claros.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-1" value="1"><label for="l51-1">1</label>
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-2" value="2"><label for="l51-2">2</label>
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-3" value="3"><label for="l51-3">3</label>
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-4" value="4"><label for="l51-4">4</label>
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-5" value="5"><label for="l51-5">5</label>
+        <input type="radio" name="52. Remuneração e reconhecimento" id="l51-ns" value="Não sei"><label class="naosei" for="l51-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="likert" data-field="53. Familiares e critérios" data-required="1">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Familiares que trabalham na empresa são cobrados e avaliados pelos mesmos critérios de qualquer profissional.</div>
+      <div class="scale-wrap likert">
+        <input type="radio" name="53. Familiares e critérios" id="l52-1" value="1"><label for="l52-1">1</label>
+        <input type="radio" name="53. Familiares e critérios" id="l52-2" value="2"><label for="l52-2">2</label>
+        <input type="radio" name="53. Familiares e critérios" id="l52-3" value="3"><label for="l52-3">3</label>
+        <input type="radio" name="53. Familiares e critérios" id="l52-4" value="4"><label for="l52-4">4</label>
+        <input type="radio" name="53. Familiares e critérios" id="l52-5" value="5"><label for="l52-5">5</label>
+        <input type="radio" name="53. Familiares e critérios" id="l52-ns" value="Não sei"><label class="naosei" for="l52-ns">Não sei</label>
+      </div>
+      <div class="scale-ends"><span>1 · Discordo totalmente</span><span>5 · Concordo totalmente</span></div>
+      <div class="field-error">Escolha uma opção para continuar.</div>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="text" data-field="54. Ambiente em 3 palavras">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Em três palavras, como você descreve o ambiente da empresa?</div>
+      <input type="text" name="54. Ambiente em 3 palavras" placeholder="Três palavras" autocomplete="off">
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="55. O que funciona">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">O que mais funciona bem na gestão da empresa hoje?</div>
+      <textarea name="55. O que funciona" placeholder="Cite exemplos concretos."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="56. Maior buraco de gestão">
+      <div class="block-eyebrow">Bloco 05 · Gestão e ambiente da empresa</div>
+      <div class="step-question">Qual é o maior buraco de gestão que você enxerga?</div>
+      <textarea name="56. Maior buraco de gestão" placeholder="Cite exemplos concretos."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="57. Uma mudança em 90 dias">
+      <div class="block-eyebrow">Bloco 06 · Fechamento</div>
+      <div class="step-question">Se pudesse mudar uma coisa na gestão da empresa nos próximos 90 dias, qual seria?</div>
+      <textarea name="57. Uma mudança em 90 dias" placeholder="A primeira coisa que você mudaria."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="textarea" data-field="58. Difícil de dizer ao dono">
+      <div class="block-eyebrow">Bloco 06 · Fechamento</div>
+      <div class="step-question">Existe algo que o dono(a) precisa saber e é difícil dizer? (opcional)</div>
+      <textarea name="58. Difícil de dizer ao dono" placeholder="Pode deixar em branco."></textarea>
+    </div>
+
+    <div class="step" data-condition="all" data-kind="consent" data-field="59. Aceite do termo" data-required="1">
+      <div class="step-question">Termo de autorização</div>
+      <div class="term-box">
+        <h4>Termo de Autorização de Uso de Dados</h4>
+        <p><strong>Finalidade.</strong> As suas respostas serão usadas no Programa de Aconselhamento da Tríade do Legado, como base para o desenvolvimento do trabalho e do plano de ação da empresa em que você trabalha, e para cruzar com a sua análise de perfil comportamental.</p>
+        <p><strong>Quem acessa.</strong> Bárbara Quercetti e a equipe da Tríade do Legado. As respostas não são compartilhadas na íntegra com a empresa. Os dados não serão vendidos nem usados para outra finalidade.</p>
+        <p><strong>Base legal.</strong> O tratamento observa a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), com base no seu consentimento.</p>
+        <p><strong>Seus direitos.</strong> Você pode pedir acesso, correção ou eliminação dos seus dados, ou revogar este consentimento, pelo mesmo canal por onde recebeu este formulário.</p>
+      </div>
+      <label class="consent-check">
+        <input type="checkbox" name="59. Aceite do termo" value="Sim, li e aceito o Termo de Autorização">
+        <span>Li e concordo com o Termo de Autorização de Uso de Dados.</span>
+      </label>
+      <div class="field-error">Marque o aceite para enviar.</div>
+    </div>
+
+  </form>
+
+  <div class="nav" id="navBar" style="display:none">
+    <div class="nav-inner">
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Voltar</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()">Próxima →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let current = 0;
+  let area = null;
+  let steps = [];
+  const params = new URLSearchParams(location.search);
+  const empresaParam = (params.get('empresa') || '').trim().slice(0, 120);
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyJV0lGXj5WgRXA1mGGaSUaVrLVdXHaD4OlIh_6LV4nRSKrSpbn1fOBXxHTKVxHH7OYrg/exec';
+
+  // relevante = pertence ao caminho da área escolhida (entra nos dados)
+  function isRelevant(step) {
+    const c = step.dataset.condition;
+    return c === 'all' || c === area;
+  }
+  // visível = relevante e não pulado (entra na navegação)
+  function isVisible(step) {
+    return isRelevant(step) && !step.classList.contains('skipped');
+  }
+  function visibleSteps() { return steps.filter(isVisible); }
+
+  function updateProgress() {
+    const vis = visibleSteps();
+    const idx = vis.indexOf(steps[current]);
+    // antes de escolher a área, conta o módulo técnico (8 telas) para o total não pular depois
+    const total = vis.length + (area === null ? 8 : 0);
+    document.getElementById('progressFill').style.width = (((idx + 1) / total) * 100) + '%';
+    document.getElementById('stepCounter').textContent = (idx + 1) + ' de ' + total;
+    document.getElementById('btnBack').disabled = idx === 0;
+    const isLast = idx === total - 1;
+    const btn = document.getElementById('btnNext');
+    btn.textContent = isLast ? 'Enviar' : 'Próxima →';
+    btn.className = isLast ? 'btn-next submit-btn' : 'btn-next';
+  }
+
+  function showStep(index) {
+    steps.forEach(s => s.classList.remove('active'));
+    steps[index].classList.add('active');
+    current = index;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function stepValue(step) {
+    const kind = step.dataset.kind;
+    const name = step.dataset.field;
+    if (kind === 'text' || kind === 'textarea') {
+      return step.querySelector('input, textarea').value.trim();
+    }
+    if (kind === 'consent') {
+      const box = step.querySelector('input[type="checkbox"]');
+      return box.checked ? box.value : '';
+    }
+    const sel = Array.from(step.querySelectorAll('input[type="radio"]')).find(r => r.checked);
+    return sel ? sel.value : '';
+  }
+
+  function validate(step) {
+    if (!step.dataset.required) return true;
+    let ok = stepValue(step) !== '';
+    if (ok && step.dataset.field.endsWith('E-mail')) {
+      ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stepValue(step));
+    }
+    step.classList.toggle('has-error', !ok);
+    return ok;
+  }
+
+  // Sempre manda TODAS as colunas, na mesma ordem, mesmo em branco (a planilha usa o
+  // cabeçalho do primeiro envio; sem isso, áreas diferentes desalinhariam as colunas).
+  function buildData(form) {
+    const fd = new FormData();
+    ['_subject', '_form'].forEach(n => fd.append(n, form.elements[n].value));
+    steps.forEach(step => fd.append(step.dataset.field, isRelevant(step) ? stepValue(step) : ''));
+    return fd;
+  }
+
+  function submitForm() {
+    const form = document.getElementById('diagForm');
+    try {
+      fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', keepalive: true, body: buildData(form) });
+    } catch (err) {}
+    // e-mail (FormSubmit): não enviar respostas de caminhos que não são da área escolhida
+    steps.forEach(step => {
+      if (!isRelevant(step)) step.querySelectorAll('input, textarea').forEach(el => { el.disabled = true; });
+    });
+    form.submit();
+  }
+
+  function goNext() {
+    const step = steps[current];
+    if (!validate(step)) return;
+    const vis = visibleSteps();
+    const idx = vis.indexOf(step);
+    if (idx === vis.length - 1) { submitForm(); return; }
+    showStep(steps.indexOf(vis[idx + 1]));
+  }
+
+  function goBack() {
+    const vis = visibleSteps();
+    const idx = vis.indexOf(steps[current]);
+    if (idx === 0) return;
+    showStep(steps.indexOf(vis[idx - 1]));
+  }
+
+  function startForm() {
+    document.getElementById('introCard').style.display = 'none';
+    document.getElementById('diagForm').style.display = 'block';
+    document.getElementById('topBar').style.display = 'block';
+    document.getElementById('navBar').style.display = 'flex';
+    showStep(0);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    steps = Array.from(document.querySelectorAll('#diagForm .step'));
+    if (empresaParam) {
+      const step = steps.find(s => s.dataset.field.endsWith('Empresa'));
+      step.querySelector('input').value = empresaParam;
+      step.classList.add('skipped');
+      const line = document.getElementById('introCompany');
+      line.textContent = empresaParam;
+      line.style.display = 'block';
+    }
+  });
+
+  // Rádios avançam sozinhos; o aceite e os campos de texto não.
+  document.addEventListener('change', function(e) {
+    if (e.target.matches('input[type="checkbox"]')) {
+      e.target.closest('.step').classList.remove('has-error');
+      return;
+    }
+    if (!e.target.matches('input[type="radio"]')) return;
+    const stepEl = e.target.closest('.step');
+    stepEl.classList.remove('has-error');
+    if (e.target.dataset.area) area = e.target.dataset.area;
+    if (stepEl.classList.contains('active')) setTimeout(goNext, 320);
+  });
+
+  document.addEventListener('input', function(e) {
+    const stepEl = e.target.closest && e.target.closest('.step');
+    if (stepEl) stepEl.classList.remove('has-error');
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      const active = document.querySelector('.step.active');
+      if (!active) return;
+      if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+      goNext();
+    }
+  });
+</script>
+
+</body>
+</html>
